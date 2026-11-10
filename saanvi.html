@@ -1,0 +1,3787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>For Saanvi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root{
+  --rosewood:#3E211B;
+  --text-body:#4A2C22;
+  --text-hint:#5A3628;
+  --text-sig:#6B4535;
+  --champagne:#FFF1DC;
+  --rose-gold:#EBBFA3;
+  --yellow:#F6B93B;
+  --gold-warm:#F6C26B;
+  --brown:#5B3A1E;
+  
+
+  --green:#6A994E;
+  --green-lt:#A8D08D;
+  --green-dk:#4F7A3A;
+  --soil:#7A5230;
+  --soil-dk:#3A2410;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{
+  width:100%;height:100%;overflow:hidden;background:#1A0E08;
+  font-family:'Bricolage Grotesque',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-style:normal;
+  color:var(--rosewood);
+}
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Stage & Background ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+#stage{
+  position:fixed;inset:0;overflow:hidden;
+  background: radial-gradient(ellipse 85% 75% at 50% 50%, #FFF1DC 0%, #F5D3BD 55%, #EBBFA3 100%);
+  transition: background 1.6s ease;
+}
+#stage.golden-hour{
+  background: radial-gradient(ellipse 85% 75% at 50% 50%, #FFE9CA 0%, #F8D7BE 55%, #EBBDA1 100%);
+}
+
+.scene{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  will-change:transform,opacity;
+  overflow:hidden;
+  z-index:10;
+}
+.scene.active{pointer-events:auto;opacity:1}
+#scene-0{z-index:30}
+#scene-0.active #s1-content{pointer-events:auto}
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Interactive water canvas ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+#water-canvas{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Persistent World Layer: Plant & Soil ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+#world-layer{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+#world-container{
+  position: relative;
+  width: min(420px, 92vw);
+  height: clamp(260px, 46vh, 440px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  will-change: transform;
+}
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Skip Intro Button ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+#skip-btn{
+  position: fixed;
+  top: max(20px, env(safe-area-inset-top, 20px));
+  right: max(20px, env(safe-area-inset-right, 20px));
+  z-index: 100;
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: #5A3628;
+  opacity: 0.7;
+  background: rgba(255,244,227,0.55);
+  border: 1px solid rgba(90,54,40,0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 8px rgba(74,42,36,0.06);
+  transition: opacity 0.25s, transform 0.25s, background 0.25s;
+}
+#skip-btn:hover{
+  opacity: 1;
+  background: rgba(255,244,227,0.85);
+  transform: translateY(-1px);
+}
+#skip-btn:focus-visible{
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+#skip-btn span{
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 600;
+}
+
+/* ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â SCENE 1: STAGED FILM TITLE SEQUENCE ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â */
+#beats-stage{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+  padding: 0 24px;
+}
+.beat{
+  position: absolute;
+  width: 100%;
+  max-width: min(90vw, 780px);
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+#beat-1, #beat-2{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 700;
+  font-variation-settings: "opsz" 48, "wdth" 100;
+  font-size: clamp(32px, 6vw, 68px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #3E211B;
+  text-shadow: 0 2px 28px rgba(255,220,190,0.9);
+}
+
+#beat-3{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 800;
+  font-variation-settings: "opsz" 72, "wdth" 100;
+  font-size: clamp(48px, 10vw, 112px);
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  color: #3E211B;
+  text-shadow: 0 2px 32px rgba(255,220,190,0.95);
+}
+
+.b-word, .b-char{
+  display: inline-block;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.b-word{ margin: 0 0.16em; }
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Scene 1 Layout (Hint, Sig, Hitbox) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+#s1-content{
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  height: 100dvh;
+  min-height: 100vh;
+  padding: max(6vh, 24px) 24px;
+  box-sizing: border-box;
+  user-select: none;
+  pointer-events: none;
+  z-index: 30;
+}
+#seed-slot{
+  position: relative;
+  width: min(400px, 90vw);
+  height: clamp(240px, 44vh, 420px);
+  margin-bottom: 3vh;
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+#seed-hitbox{
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 50;
+  background: transparent;
+  border: none;
+  min-width: 90px;
+  min-height: 90px;
+  pointer-events: auto;
+}
+#seed-hitbox:focus-visible{
+  outline: 2px solid var(--yellow);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+#hint-sig-group{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5vh;
+  flex-shrink: 0;
+}
+#s1-hint{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-variation-settings: "opsz" 24, "wdth" 100;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  color: #5A3628;
+  opacity: 0;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 0 16px rgba(255,241,220,0.9);
+  will-change: transform, opacity;
+}
+#s1-sig{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-variation-settings: "opsz" 20, "wdth" 100;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: #6B4535;
+  opacity: 0;
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 0 14px rgba(255,241,220,0.9);
+}
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Continue Button (Scene 1 & 2) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+.continue-btn{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: #5A3628;
+  background: rgba(255,244,227,0.7);
+  border: 1px solid rgba(90,54,40,0.25);
+  border-radius: 28px;
+  padding: 10px 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 3px 14px rgba(74,42,36,0.1);
+  opacity: 0;
+  pointer-events: auto;
+  transition: transform 0.25s, background 0.25s, box-shadow 0.25s, opacity 0.4s;
+}
+.continue-btn:hover{
+  transform: translateY(-2px);
+  background: rgba(255,244,227,0.95);
+  box-shadow: 0 5px 20px rgba(74,42,36,0.16);
+}
+.continue-btn:focus-visible{
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+#s1-continue-wrap{
+  position: absolute;
+  bottom: max(6vh, 28px);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â SCENE 2 CONTENT: "A MONTH LATER" ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â */
+#s2-content{
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 6vh 24px;
+  pointer-events: none;
+}
+
+/* Desktop layout: plant left, text right */
+@media (min-width: 769px){
+  #s2-content{
+    align-items: flex-start;
+    padding-left: 50vw;
+    padding-right: 8vw;
+    text-align: left;
+  }
+  #s2-main-counter{ justify-content: flex-start; }
+  #s2-continue-wrap{ align-self: flex-start; margin-top: 1vh; }
+}
+
+/* Mobile layout: text on top, plant in lower half */
+@media (max-width: 768px){
+  #s2-content{
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: max(7vh, 26px);
+    text-align: center;
+  }
+  #s2-main-counter{ justify-content: center; }
+  #s2-continue-wrap{
+    align-self: center;
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  }
+}
+
+#s2-beat1-wrap{
+  min-height: 48px;
+  margin-bottom: 2vh;
+}
+#s2-quote{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 700;
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 600;
+  color: #6B4535;
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+  line-height: 1.18;
+  color: #3E211B;
+  text-shadow: 0 2px 24px rgba(255,220,190,0.9);
+  margin: 0;
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+.s2-word{
+  display: inline-block;
+  opacity: 0;
+  margin-right: 0.18em;
+  will-change: transform, opacity;
+}
+
+#s2-counter-block{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2vh;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+#s2-main-counter{
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+.digit-strip-wrap{
+  height: clamp(80px, 13vw, 170px);
+  overflow: hidden;
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1;
+}
+.digit-strip{
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0%);
+  will-change: transform;
+}
+.digit{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 800;
+  font-variation-settings: "opsz" 72, "wdth" 100;
+  font-size: clamp(80px, 13vw, 170px);
+  letter-spacing: -0.04em;
+  color: #5A2A1E;
+  line-height: 1;
+  height: clamp(80px, 13vw, 170px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.unit-wrap{
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+#month-unit-text{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 800;
+  font-variation-settings: "opsz" 72, "wdth" 100;
+  font-size: clamp(80px, 13vw, 170px);
+  letter-spacing: -0.04em;
+  color: #5A2A1E;
+  line-height: 1;
+  margin-left: 0.12em;
+  opacity: 0;
+}
+#s2-closing{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #4A2C22;
+  opacity: 0;
+  margin: 1.5vh 0 2.5vh 0;
+  max-width: 480px;
+}
+
+#s2-continue-wrap{
+  display: flex;
+  pointer-events: auto;
+  position: relative;
+  z-index: 40;
+}
+#s2-continue-btn{
+  pointer-events: auto;
+}
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Music Toggle ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+
+/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Scene 3 Placeholder ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+#scene-placeholder{
+  font-family: 'Bricolage Grotesque',system-ui,sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: 0.01em;
+  color: var(--text-hint);
+  text-align: center;
+  padding: 2rem;
+  opacity: 0;
+}
+@media(prefers-reduced-motion:reduce){
+  .scene{transition: opacity 0.3s ease!important}
+}
+
+/* Scene 2: balanced hero composition */
+#world-container{width:min(420px,92vw);height:clamp(260px,46vh,440px);max-height:none}
+.hero-garden #world-container{width:min(54vw,840px);height:92vh;max-height:92vh}
+.hero-garden #hero-svg{height:100vh;width:100%}
+#plant-assembly{transform:scale(1);transform-origin:0px 60px;transform-box:view-box}
+#s2-content{padding:6vh 8vw 6vh 45vw;align-items:flex-start;text-align:left}
+#s2-quote{color:#6B4535;text-shadow:none;font-weight:600}
+#s2-beat1-wrap{min-height:0;margin-bottom:2vh}
+#s2-main-counter{justify-content:flex-start}
+#month-unit-text{margin-left:.12em}
+#s2-closing{margin:2vh 0 1.5vh;max-width:540px}
+#s2-continue-wrap{align-self:flex-start;margin-top:0}
+#s2-text-glow{position:absolute;z-index:1;left:67.5vw;top:50%;width:60vh;height:60vh;transform:translate(-50%,-50%);pointer-events:none;background:radial-gradient(circle,rgba(255,227,184,.35) 0%,rgba(255,227,184,.22) 48%,rgba(255,227,184,0) 72%)}
+#s2-content{padding:6vh 10vw 6vh 45vw;align-items:flex-start;justify-content:center;text-align:left;z-index:5;transform:translateY(-5vh)}
+#s2-content>*{width:min(100%,560px)}
+#s2-beat1-wrap{min-height:0;margin:0 0 3vh}
+#s2-quote{font-weight:600;color:#6B4535;text-shadow:none;line-height:1.18;text-wrap:balance}
+#s2-counter-block{margin:0;opacity:0}
+.digit-strip-wrap,.digit{height:clamp(72px,11vw,148px)}
+.digit{font-size:clamp(72px,11vw,148px)}
+#month-unit-text{font-size:clamp(72px,11vw,148px)}
+#s2-counter-block{margin:0 0 6vh;opacity:0}
+#s2-personal-mask{overflow:hidden}
+#s2-personal-line{max-width:30ch;margin:0;font-size:clamp(20px,2.2vw,28px);font-weight:600;line-height:1.4;color:#4A2C22;text-wrap:balance}
+.personal-reveal-line{display:block;opacity:0;will-change:transform,opacity}
+#s2-closing{max-width:560px;margin:2.5vh 0 0;font-size:16px;line-height:1.4;font-weight:500;color:rgba(107,69,53,.9);opacity:0}
+.s2-closing-break{display:none}
+#s2-plant-date{position:absolute;left:45vw;top:50%;width:auto;display:flex;align-items:center;opacity:0;z-index:6}
+.date-connector{position:absolute;right:100%;top:50%;width:40px;height:40px;overflow:visible;transform:translateY(-50%)}
+.date-connector path{fill:none;stroke:rgba(90,54,40,.35);stroke-width:1;stroke-dasharray:60;stroke-dashoffset:60;stroke-linecap:round}
+.plant-date-tag{position:relative;white-space:nowrap;border-radius:999px;padding:8px 16px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));border:1px solid rgba(255,255,255,.7);color:#5A3628;font-weight:600;font-size:14px;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);box-shadow:0 10px 30px rgba(120,70,40,.14),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.25)}
+#s2-continue-wrap{align-self:flex-start;margin-top:6vh;position:relative;bottom:auto;isolation:isolate}
+#s2-continue-wrap::before{content:"";position:absolute;z-index:-1;inset:-18px -24px;border-radius:999px;background:radial-gradient(ellipse,rgba(246,185,59,.25),rgba(246,185,59,0) 70%);opacity:.55;animation:s2WarmBreath 4s ease-in-out infinite;pointer-events:none}
+@keyframes s2WarmBreath{0%,100%{opacity:.35;transform:scale(.96)}50%{opacity:.75;transform:scale(1.04)}}
+#s2-continue-btn{position:relative;overflow:hidden;isolation:isolate;padding:15px 32px;border:1px solid rgba(255,255,255,.7);border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));color:#4A2A20;font-family:inherit;font-size:16px;font-weight:600;letter-spacing:.01em;box-shadow:0 10px 30px rgba(120,70,40,.14),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.25);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);transition:transform .25s ease,box-shadow .25s ease,background .25s ease}
+#s2-continue-btn>span,#s2-continue-btn>.continue-arrow{position:relative;z-index:1}
+#s2-continue-btn::before{content:"";position:absolute;z-index:0;top:-60%;bottom:-60%;left:-45%;width:38%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-180%) skewX(-20deg);animation:s2Sheen 5s ease-in-out infinite;pointer-events:none}
+@keyframes s2Sheen{0%,82%{transform:translateX(-180%) skewX(-20deg)}100%{transform:translateX(520%) skewX(-20deg)}}
+#s2-continue-btn:hover{transform:translateY(-2px);background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.28));box-shadow:0 14px 34px rgba(120,70,40,.22),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.32)}
+#s2-continue-btn:hover::before{animation:s2SheenOnce .9s ease-out both}
+@keyframes s2SheenOnce{from{transform:translateX(-180%) skewX(-20deg)}to{transform:translateX(520%) skewX(-20deg)}}
+#s2-continue-btn:active{transform:scale(.98)}
+.continue-arrow{width:16px;height:16px;margin-left:8px;vertical-align:middle;transition:transform .25s ease}
+#s2-continue-btn:hover .continue-arrow{transform:translateX(4px)}
+@supports not ((backdrop-filter:blur(18px)) or (-webkit-backdrop-filter:blur(18px))){#s2-continue-btn,.plant-date-tag{background:rgba(255,244,227,.85)}}
+@media(max-width:768px){
+ .hero-garden #world-container{width:96vw;height:44vh;max-height:44vh;align-self:flex-start}
+ .hero-garden #hero-svg{height:44vh;width:100%}
+ #s2-text-glow{left:50vw;top:68vh;width:48vh;height:48vh}
+ #s2-content{justify-content:flex-start;align-items:center;text-align:center;padding:47vh 5vw .5vh;transform:none}
+ #s2-content>*{width:100%;max-width:560px}
+ #s2-quote{font-size:20px;max-width:100%}
+ .s2-word{white-space:normal}
+ .digit-strip-wrap,.digit{height:56px}
+ .digit{font-size:56px}
+ #month-unit-text{font-size:56px}
+ #s2-beat1-wrap{margin-bottom:.5vh}
+ #s2-main-counter{justify-content:center}
+ #s2-counter-block{margin-bottom:.5vh}
+ #s2-personal-mask{margin-inline:auto}
+ #s2-closing{text-align:center;margin:0 auto}
+ .s2-closing-break{display:block}
+ #s2-plant-date{position:relative;left:auto;top:auto;align-self:center;margin-top:1vh}
+ .date-connector{display:none}
+ #s2-continue-wrap{align-self:center;position:relative;bottom:auto;margin-top:.5vh}
+ .hero-garden #world-layer{align-items:flex-start;justify-content:center}
+}
+
+/* Scene 3: one quiet moment at a time */
+#stage.s3-warm-0{background:radial-gradient(ellipse 85% 75% at 50% 50%,#FFE9CA 0%,#F8D7BE 55%,#EBBDA1 100%)}
+#stage.s3-warm-1{background:radial-gradient(ellipse 85% 75% at 50% 50%,#FFE6C2 0%,#F7D3B9 55%,#EAB99C 100%)}
+#stage.s3-warm-2{background:radial-gradient(ellipse 85% 75% at 50% 50%,#FFE3BB 0%,#F6CFB4 55%,#E8B598 100%)}
+#stage.s3-warm-3{background:radial-gradient(ellipse 85% 75% at 50% 50%,#FFE0B4 0%,#F5CBAF 55%,#E7B294 100%)}
+#scene-2{display:block;background:transparent;overflow:hidden;touch-action:pan-y}
+#scene3-plant-halo{position:fixed;z-index:3;left:9vw;top:50%;width:min(42vw,620px);height:min(78vh,800px);transform:translateY(-50%);pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 48%,rgba(246,185,59,.18) 0%,rgba(246,185,59,.08) 42%,rgba(246,185,59,0) 72%)}
+#scene3-content{position:absolute;z-index:5;left:45vw;right:10vw;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;padding:4vh 0 84px;pointer-events:none;opacity:0;will-change:transform,opacity}
+#scene3-moments{display:grid;align-content:center}
+.s3-moment{grid-area:1/1;visibility:hidden;opacity:0;max-width:min(100%,620px);display:flex;flex-direction:column;align-items:flex-start}
+.s3-intro{grid-area:1/1;visibility:hidden;opacity:0;max-width:min(100%,620px);display:flex;flex-direction:column;align-items:flex-start}
+.s3-intro-statement{max-width:20ch;margin:0;color:#3E211B;font-size:clamp(26px,3.6vw,46px);font-weight:700;line-height:1.2;letter-spacing:-.02em;text-wrap:balance}
+.s3-intro-word{display:inline-block;white-space:normal;opacity:0;will-change:transform,opacity}
+.s3-intro-support{margin:18px 0 0;color:#6B4535;font-size:17px;font-weight:500;line-height:1.45;opacity:0;will-change:transform,opacity}
+.s3-title{margin:0 0 18px;color:#8A5A45;font-size:16px;font-weight:600;letter-spacing:.02em;line-height:1.3;opacity:0;will-change:transform,opacity}
+.s3-statement{max-width:22ch;margin:0;color:#3E211B;font-size:clamp(28px,4vw,52px);font-weight:700;line-height:1.15;letter-spacing:-.02em;text-wrap:balance;will-change:transform,opacity}
+.s3-support{max-width:34ch;margin:20px 0 0;color:#5A3628;font-size:clamp(17px,1.8vw,21px);font-weight:500;line-height:1.5;opacity:0;will-change:transform,opacity}
+.s3-exam-support{max-width:36ch}
+.s3-word,.s3-char{display:inline-block;white-space:pre;opacity:0;will-change:transform,opacity}
+.s3-line-mask{display:block;overflow:hidden}
+.s3-line{display:block;opacity:0;will-change:transform,opacity}
+#scene3-controls{position:absolute;left:0;right:0;bottom:34px;display:flex;justify-content:center;pointer-events:auto;isolation:isolate}
+#scene3-controls::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:230px;height:88px;transform:translate(-50%,-50%) scale(.96);border-radius:999px;background:radial-gradient(ellipse,rgba(246,185,59,.25),rgba(246,185,59,0) 70%);opacity:.5;filter:blur(14px);animation:s3ButtonGlow 4s ease-in-out infinite;pointer-events:none}
+@keyframes s3ButtonGlow{0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(.96)}50%{opacity:.7;transform:translate(-50%,-50%) scale(1.04)}}
+#scene3-next{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:15px 32px;border:1px solid rgba(255,255,255,.7);border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));color:#4A2A20;font:600 16px/1 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:.01em;box-shadow:0 10px 30px rgba(120,70,40,.14),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.25);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);transition:transform .25s ease,box-shadow .25s ease,background .25s ease;cursor:pointer}
+#scene3-next::before{content:"";position:absolute;z-index:0;top:-60%;bottom:-60%;left:-45%;width:38%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-180%) skewX(-20deg);animation:s3Sheen 5s ease-in-out infinite;pointer-events:none}
+#scene3-next>span,#scene3-next>.s3-arrow{position:relative;z-index:1}
+#scene3-next:hover{transform:translateY(-2px);background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.28));box-shadow:0 14px 34px rgba(120,70,40,.22),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.32)}
+#scene3-next:hover::before{animation:s3SheenOnce .9s ease-out both}
+#scene3-next:active{transform:scale(.98)}
+#scene3-next .s3-arrow{width:16px;height:16px;margin-left:8px;transition:transform .25s ease}
+#scene3-next:hover .s3-arrow{transform:translateX(4px)}
+@keyframes s3Sheen{0%,82%{transform:translateX(-180%) skewX(-20deg)}100%{transform:translateX(520%) skewX(-20deg)}}
+@keyframes s3SheenOnce{from{transform:translateX(-180%) skewX(-20deg)}to{transform:translateX(520%) skewX(-20deg)}}
+#scene3-progress{position:absolute;left:0;right:0;bottom:5px;display:flex;justify-content:center;gap:6px;pointer-events:none}
+.s3-progress-slot{width:28px;height:8px;display:flex;align-items:center;justify-content:center}
+.s3-progress-dot{width:28px;height:8px;border:1px solid rgba(255,255,255,.7);border-radius:999px;background:rgba(255,255,255,.4);opacity:1;transform:scaleX(.286);transition:transform .45s ease,opacity .45s ease;transform-origin:center}
+.s3-progress-dot.is-active{background:#F6B93B;border-color:rgba(246,185,59,.7);opacity:1;transform:scaleX(1)}
+.s3-progress-dot.is-complete{background:#F6B93B;border-color:rgba(246,185,59,.5);opacity:.6}
+#scene4-toast{position:fixed;z-index:1000;left:50%;top:50%;transform:translate(-50%,12px);opacity:0;visibility:hidden;pointer-events:none;padding:12px 20px;border:1px solid rgba(255,255,255,.7);border-radius:999px;background:rgba(255,244,227,.9);color:#4A2A20;font-size:16px;font-weight:600;white-space:nowrap;box-shadow:0 10px 30px rgba(120,70,40,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+@supports not ((backdrop-filter:blur(18px)) or (-webkit-backdrop-filter:blur(18px))){#scene3-next{background:rgba(255,244,227,.85)}}
+@media(max-width:768px){
+ #scene3-plant-halo{left:2vw;top:22vh;width:96vw;height:42vh;transform:none}
+ #scene3-content{left:5vw;right:5vw;top:49vh;bottom:0;justify-content:center;text-align:center;padding:0 0 max(26px,calc(env(safe-area-inset-bottom,0px) + 24px))}
+ .s3-moment{align-items:center;max-width:100%}
+ .s3-intro{align-items:center;max-width:100%;text-align:center}
+ .s3-intro-support{margin-top:14px}
+ .s3-title{margin-bottom:12px}
+ .s3-statement{max-width:22ch;font-size:clamp(28px,7.8vw,36px)}
+ .s3-support{max-width:34ch;margin-top:14px;font-size:17px}
+ .s3-exam-support{max-width:36ch}
+ #scene3-controls{position:relative;left:auto;right:auto;bottom:auto;margin-top:18px;flex:0 0 auto}
+ #scene3-progress{bottom:max(5px,env(safe-area-inset-bottom,0px))}
+}
+@media(prefers-reduced-motion:reduce){
+ #scene3-next,#scene3-next::before,#scene3-controls::before,.s3-progress-dot{animation:none!important;transition:none!important}
+}
+
+/* Scene 5: the finale */
+#scene-4{display:block;background:#263B1D url("./Hand-Drawn%20Sunflower%20Sunset%20Field.png") center center/cover no-repeat;overflow:hidden;pointer-events:none}
+#scene-4.active{pointer-events:auto}
+#scene5-final-text{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;top:8vh;left:50%;width:min(92vw,760px);transform:translateX(-50%);gap:2vh;text-align:center;font-family:'Bricolage Grotesque',system-ui,sans-serif;pointer-events:none}
+#scene5-main{max-width:20ch;margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:clamp(30px,4.4vw,58px);font-weight:700;line-height:1.12;letter-spacing:-.02em;text-wrap:balance;color:#24152F;text-shadow:0 1px 3px rgba(255,244,227,.8)}
+#scene5-sub{margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:clamp(18px,2.2vw,26px);font-weight:600;line-height:1.2;color:#24152F;text-shadow:0 1px 3px rgba(255,244,227,.8)}
+.scene5-word{display:inline-block;margin-right:.22em;opacity:0;transform:translateY(16px);will-change:transform,opacity}
+#stage.scene5-active #world-layer{display:none}
+@media(max-width:768px){#scene5-final-text{top:8vh;width:94vw}}
+#memory-window{--flower-size:min(32vh,30vw);position:absolute;z-index:1;left:50vw;top:50vh;width:var(--flower-size);aspect-ratio:1;opacity:0;transform:translate(-50%,-50%) scale(.6);transform-origin:center;pointer-events:none;filter:drop-shadow(0 13px 15px rgba(48,26,13,.22));will-change:transform,opacity;touch-action:manipulation}
+#memory-window.loaded{pointer-events:none}
+#memory-window.is-enlarged{z-index:20;filter:drop-shadow(0 18px 22px rgba(48,26,13,.28))}
+.memory-bob{position:absolute;inset:0;transform-origin:center}
+#memory-window svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#memory-sepals{transform-box:view-box;transform-origin:250px 250px}
+#memory-petals-back,#memory-petals-front{transform-box:view-box;transform-origin:250px 250px}
+#memory-window.motion-ready .memory-bob{animation:memoryFloat 6s ease-in-out infinite}
+#memory-window.motion-ready #memory-petals-back{animation:memorySpinBack 90s linear infinite}
+#memory-window.motion-ready #memory-petals-front{animation:memorySpinFront 120s linear infinite}
+@keyframes memoryFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes memorySpinBack{to{transform:rotate(360deg)}}
+@keyframes memorySpinFront{to{transform:rotate(-360deg)}}
+.memory-photo-rim{position:absolute;left:19%;top:19%;width:62%;aspect-ratio:1;padding:5px;border-radius:50%;background:radial-gradient(circle at 30% 24%,#8A5A2B,#5B3A1E 78%);box-shadow:inset 0 1px 2px rgba(255,235,190,.25),0 0 0 1px rgba(76,43,21,.55);z-index:2}
+.memory-photo-stack{position:relative;width:100%;height:100%;overflow:hidden;border-radius:50%;background:#5B3A1E;box-shadow:inset 0 0 12px rgba(42,23,9,.35)}
+.memory-photo-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transform:scale(1);transition:opacity 1.2s ease;will-change:transform,opacity}
+.memory-photo-stack img.is-visible{opacity:1}
+.memory-photo-stack img.ken-burn{animation:memoryKenBurns 3.8s linear both}
+@keyframes memoryKenBurns{from{transform:scale(1)}to{transform:scale(1.07)}}
+.memory-photo-stack img.origin-alt{transform-origin:100% 100%}
+.memory-seed-dots{position:absolute;inset:0;z-index:3;pointer-events:none}
+.memory-seed-dot{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(42,23,9,.7);transform:translate(-50%,-50%);box-shadow:0 0 1px rgba(255,221,167,.18)}
+#music-control{position:absolute;right:max(20px,env(safe-area-inset-right,20px));bottom:max(20px,env(safe-area-inset-bottom,20px));z-index:30;display:flex;align-items:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid rgba(255,255,255,.55);border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,244,227,.2));color:#3E211B;font:600 14px/1 'Bricolage Grotesque',system-ui,sans-serif;box-shadow:0 8px 24px rgba(40,25,15,.2),inset 0 1px 0 rgba(255,255,255,.75);backdrop-filter:blur(14px) saturate(150%);-webkit-backdrop-filter:blur(14px) saturate(150%);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease,visibility .35s ease;cursor:pointer}
+#music-control.music-available{opacity:1;visibility:visible;pointer-events:auto}
+#music-control svg{width:18px;height:18px;flex:none}
+#music-label{display:none;white-space:nowrap}
+#music-control.needs-tap #music-label{display:inline-block;animation:musicPromptPulse 1.2s ease-in-out infinite}
+@keyframes musicPromptPulse{0%,100%{opacity:.65}50%{opacity:1}}
+@media(max-width:768px){#memory-window{--flower-size:40vw}#memory-window.is-enlarged{--flower-size:40vw}#music-control{right:max(14px,env(safe-area-inset-right,14px));bottom:max(14px,env(safe-area-inset-bottom,14px))}}
+@media(prefers-reduced-motion:reduce){
+ #memory-window.motion-ready .memory-bob,#memory-window.motion-ready #memory-petals-back,#memory-window.motion-ready #memory-petals-front{animation:none!important}
+ #memory-window.motion-ready .memory-photo-stack img{animation:none!important}
+ #memory-window .memory-photo-stack img{transition:opacity 1.2s ease}
+ #music-control.needs-tap #music-label{animation:none}
+}
+
+/* Scene 4: the letter and its slow bloom */
+#scene-3{display:block;background:transparent;overflow:hidden;touch-action:pan-y}
+#scene4-content{position:absolute;z-index:5;left:45vw;right:8vw;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:6vh 0;opacity:1;pointer-events:none}
+#letter-sheet{position:relative;z-index:1;width:min(100%,560px);max-height:76vh;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:clamp(28px,4vw,52px);border:1px solid rgba(255,255,255,.7);border-radius:28px;background:linear-gradient(135deg,rgba(255,248,236,.72),rgba(255,236,214,.45));backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);box-shadow:0 16px 48px rgba(120,70,40,.12);pointer-events:auto;will-change:transform,opacity}
+#letter-sheet::-webkit-scrollbar{display:none}
+.letter-body{max-width:46ch;color:#3E211B;font-size:clamp(17px,1.7vw,21px);font-weight:500;line-height:1.65}
+.letter-paragraph{margin:0 0 1.1em;opacity:1;color:#3E211B;will-change:opacity}
+.letter-paragraph:last-child{margin-bottom:0}
+.letter-greeting{font-size:1.25em;font-weight:700}
+.letter-signoff{font-weight:600}
+.letter-signoff-name{display:block;font-weight:700}
+.letter-line-mask{display:block;min-height:1em;overflow:hidden;line-height:inherit}
+.letter-line{display:block;min-height:1em;line-height:inherit;opacity:0;will-change:transform,opacity}
+.letter-name-char{display:inline-block;white-space:pre;opacity:0;transform:translateY(10px);will-change:transform,opacity}
+#letter-actions{position:relative;isolation:isolate;width:min(100%,560px);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 8px 0;pointer-events:auto;visibility:hidden;opacity:0;transform:translateY(8px);will-change:transform,opacity}
+#letter-actions::before{content:"";position:absolute;z-index:-1;right:22px;top:50%;width:230px;height:88px;transform:translate(0,-50%) scale(.96);border-radius:999px;background:radial-gradient(ellipse,rgba(246,185,59,.25),rgba(246,185,59,0) 70%);opacity:.5;filter:blur(14px);animation:s3ButtonGlow 4s ease-in-out infinite;pointer-events:none}
+#letter-continue{display:none;position:relative;overflow:hidden;isolation:isolate;align-items:center;justify-content:center;min-height:50px;padding:15px 32px;border:1px solid rgba(255,255,255,.7);border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));color:#4A2A20;font:600 16px/1 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:.01em;box-shadow:0 10px 30px rgba(120,70,40,.14),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.25);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);transition:transform .25s ease,box-shadow .25s ease,background .25s ease;cursor:pointer;opacity:0;will-change:transform,opacity}
+#letter-continue::before{content:"";position:absolute;z-index:0;top:-60%;bottom:-60%;left:-45%;width:38%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-180%) skewX(-20deg);animation:s3Sheen 5s ease-in-out infinite;pointer-events:none}
+#letter-continue:hover::before{animation:s3SheenOnce .9s ease-out both}
+#letter-continue>span,#letter-continue>.s3-arrow{position:relative;z-index:1}
+#letter-continue .s3-arrow{width:16px;height:16px;margin-left:8px;transition:transform .25s ease}
+#letter-continue:hover{transform:translateY(-2px);background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.28));box-shadow:0 14px 34px rgba(120,70,40,.22),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.32)}
+#letter-continue:hover .s3-arrow{transform:translateX(4px)}
+#letter-continue:active{transform:scale(.98)}
+#scene4-toast{transform:translate(-50%,12px)}
+@supports not ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))){#letter-sheet{background:rgba(255,244,227,.9)}#letter-continue{background:rgba(255,244,227,.85)}}
+@media(max-width:768px){
+ body.letter-mode #world-container{height:30vh;max-height:30vh}
+ body.letter-mode #hero-svg{height:30vh;width:96vw}
+ #scene4-content{left:5vw;right:5vw;top:34vh;bottom:max(8px,env(safe-area-inset-bottom,8px));justify-content:flex-start;align-items:center;padding:0 0 max(8px,env(safe-area-inset-bottom,8px))}
+ #letter-sheet{width:100%;max-height:52vh;padding:22px 22px 18px;border-radius:24px}
+ .letter-body{font-size:17px;line-height:1.52}
+ #letter-actions{padding:8px 54px 0 2px;gap:8px}
+ #letter-continue{padding:13px 22px;min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){#letter-sheet{scroll-behavior:auto}#letter-actions::before,#letter-continue::before{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="stage" role="main">
+
+<!-- Interactive water canvas -->
+<canvas id="water-canvas" aria-hidden="true"></canvas>
+
+<!-- Skip intro button for Scene 1 -->
+<button id="skip-btn" aria-label="Skip intro to seed">skip intro <span>&rsaquo;</span></button>
+
+<!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+     PERSISTENT WORLD LAYER (Plant, Soil, Sprout across Scene 1 & 2)
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+<div id="world-layer" aria-hidden="true">
+<div id="world-container">
+  <button id="plant-hitbox" style="position:absolute;inset:0;cursor:pointer;background:transparent;border:none;pointer-events:none;z-index:25;" aria-label="Interactive plant"></button>
+  <svg id="hero-svg" viewBox="-160 -360 320 460" width="100%" height="100%"
+    style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);overflow:visible" aria-hidden="true">
+  <defs>
+    <linearGradient id="seedBody" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#4A3828"/>
+      <stop offset="45%" stop-color="#2E2018"/>
+      <stop offset="100%" stop-color="#1A120A"/>
+    </linearGradient>
+    <linearGradient id="seedStripe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5E6D0"/>
+      <stop offset="50%" stop-color="#E8D4B8"/>
+      <stop offset="100%" stop-color="#D4BFA0"/>
+    </linearGradient>
+    <linearGradient id="seedGloss" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#FFF8EE" stop-opacity="0.55"/>
+      <stop offset="40%" stop-color="#FFF0DD" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#D4A870" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="soilTop" cx="50%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#A08060"/>
+      <stop offset="70%" stop-color="#7A5838"/>
+      <stop offset="100%" stop-color="#5A3A1E"/>
+    </radialGradient>
+    <radialGradient id="soilBase" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#6B4828"/>
+      <stop offset="100%" stop-color="#3A2210"/>
+    </radialGradient>
+    <radialGradient id="heartGlow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#F6B93B" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#F2B8A2" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#F2B8A2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="groundShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3A2210" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#3A2210" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="contactShadow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#2A1408" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#2A1408" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#2A1408" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="reflectionGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C8A070" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#C8A070" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stemGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#A8D08D"/>
+      <stop offset="50%" stop-color="#7BAF5E"/>
+      <stop offset="100%" stop-color="#4F7A3A"/>
+    </linearGradient>
+    <radialGradient id="leafGradL" cx="60%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#8DBF6A"/>
+      <stop offset="70%" stop-color="#6A994E"/>
+      <stop offset="100%" stop-color="#4F7A3A"/>
+    </radialGradient>
+    <radialGradient id="leafGradR" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#8DBF6A"/>
+      <stop offset="70%" stop-color="#6A994E"/>
+      <stop offset="100%" stop-color="#4F7A3A"/>
+    </radialGradient>
+    <linearGradient id="leafGloss" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#C8E8A8" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#6A994E" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <g id="plant-assembly">
+  <!-- Soil Mound Group -->
+  <g id="soil-mound-group">
+    <ellipse cx="0" cy="60" rx="130" ry="20" fill="url(#groundShadow)"/>
+    <ellipse cx="0" cy="66" rx="90" ry="6" fill="url(#reflectionGrad)"/>
+    <g id="soil-group">
+      <ellipse cx="0" cy="48" rx="108" ry="30" fill="url(#soilBase)"/>
+      <path d="M-100 50 Q-80 18 -40 14 Q-10 10 10 12 Q50 10 80 18 Q105 28 100 50 Z" fill="url(#soilTop)"/>
+      <path d="M-60 30 Q-20 18 10 16 Q50 18 75 28" stroke="#C8A878" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+      <path d="M-95 45 Q-85 38 -70 36 Q-50 32 -30 30" stroke="#8B6840" stroke-width="1.2" fill="none" opacity="0.25"/>
+      <path d="M30 30 Q55 32 75 38 Q90 42 98 48" stroke="#8B6840" stroke-width="1.2" fill="none" opacity="0.25"/>
+      <path d="M-90 50 Q0 64 90 50" stroke="#2A1408" stroke-width="4" fill="none" opacity="0.15" stroke-linecap="round"/>
+    </g>
+    <g id="grains" opacity="0.85">
+      <ellipse cx="-52" cy="35" rx="5" ry="3.5" fill="#9B7A58" transform="rotate(-18 -52 35)"/>
+      <ellipse cx="-55" cy="36" rx="2.5" ry="2" fill="#7A5838" transform="rotate(10 -55 36)" opacity="0.7"/>
+      <ellipse cx="38" cy="32" rx="4.5" ry="3" fill="#8B6A48" transform="rotate(22 38 32)"/>
+      <ellipse cx="62" cy="38" rx="3.5" ry="2.5" fill="#A08868" transform="rotate(-8 62 38)"/>
+      <ellipse cx="-28" cy="28" rx="3" ry="2" fill="#7A5838" transform="rotate(5 -28 28)"/>
+      <ellipse cx="15" cy="26" rx="2.8" ry="2.2" fill="#9B8060"/>
+      <ellipse cx="-68" cy="42" rx="4" ry="2.8" fill="#8B7050" transform="rotate(-14 -68 42)"/>
+      <ellipse cx="72" cy="42" rx="3" ry="2.2" fill="#7A5838" transform="rotate(12 72 42)"/>
+      <circle cx="-42" cy="30" r="1.8" fill="#6B4828"/>
+      <circle cx="-18" cy="24" r="1.4" fill="#8B6A48"/>
+      <circle cx="28" cy="28" r="1.6" fill="#6B4828"/>
+      <circle cx="48" cy="34" r="1.2" fill="#A08868"/>
+      <circle cx="-78" cy="44" r="1.5" fill="#7A5838"/>
+      <circle cx="82" cy="44" r="1.3" fill="#6B4828"/>
+      <circle cx="-35" cy="32" r="1" fill="#9B7A58"/>
+      <circle cx="55" cy="36" r="1.1" fill="#8B6A48"/>
+      <circle cx="-8" cy="22" r="1.3" fill="#7A5838"/>
+      <circle cx="5" cy="24" r="0.9" fill="#6B4828"/>
+      <circle cx="-62" cy="40" r="1.6" fill="#A08868"/>
+      <circle cx="88" cy="46" r="1.2" fill="#7A5838"/>
+      <circle cx="-48" cy="38" r="1" fill="#8B7050"/>
+      <circle cx="20" cy="25" r="1.4" fill="#6B4828"/>
+    </g>
+  </g>
+
+  <!-- Seed Assembly (Hidden after sprout emerges) -->
+  <g id="seed-assembly">
+    <ellipse id="seed-halo" cx="0" cy="-5" rx="65" ry="58" fill="url(#heartGlow)" opacity="0"/>
+    <ellipse id="seed-pulse-ring" cx="0" cy="5" rx="36" ry="30" fill="none" stroke="#F6C26B" stroke-width="1.5" opacity="0"/>
+    <ellipse id="hb-glow" cx="0" cy="-10" rx="55" ry="50" fill="url(#heartGlow)" opacity="0"/>
+    <ellipse cx="4" cy="30" rx="32" ry="10" fill="url(#contactShadow)" transform="rotate(-12 4 30)"/>
+
+    <g id="seed-interactive">
+      <g id="seed-whole" transform="rotate(-12 0 10)">
+        <g id="seed-L">
+          <path d="M0 38 C-8 34 -18 24 -22 10 C-24 -2 -22 -18 -18 -32 C-14 -44 -8 -56 0 -62 L0 38 Z" fill="url(#seedBody)" stroke="#1A0E06" stroke-width="0.4"/>
+          <path d="M-4 -56 C-8 -42 -12 -22 -12 -4 C-12 12 -10 26 -6 36" stroke="url(#seedStripe)" stroke-width="3.5" fill="none" opacity="0.65" stroke-linecap="round"/>
+          <path d="M-8 -48 C-14 -32 -18 -12 -18 6 C-17 18 -14 30 -10 36" stroke="url(#seedStripe)" stroke-width="2.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+          <path d="M-2 -58 C-4 -44 -5 -28 -5 -10 C-5 6 -4 22 -2 36" stroke="url(#seedStripe)" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"/>
+          <path d="M-2 -60 C-6 -50 -10 -38 -14 -24 C-16 -14 -16 -4 -14 6" stroke="url(#seedGloss)" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>
+        </g>
+        <g id="seed-R">
+          <path d="M0 38 C8 34 18 24 22 10 C24 -2 22 -18 18 -32 C14 -44 8 -56 0 -62 L0 38 Z" fill="url(#seedBody)" stroke="#1A0E06" stroke-width="0.4"/>
+          <path d="M4 -56 C8 -42 12 -22 12 -4 C12 12 10 26 6 36" stroke="url(#seedStripe)" stroke-width="3.5" fill="none" opacity="0.55" stroke-linecap="round"/>
+          <path d="M8 -48 C14 -32 18 -12 18 6 C17 18 14 30 10 36" stroke="url(#seedStripe)" stroke-width="2.2" fill="none" opacity="0.4" stroke-linecap="round"/>
+          <path d="M2 -58 C4 -44 5 -28 5 -10 C5 6 4 22 2 36" stroke="url(#seedStripe)" stroke-width="1.5" fill="none" opacity="0.25" stroke-linecap="round"/>
+          <path d="M16 -28 C20 -14 22 2 20 14 C18 24 14 32 10 36" stroke="#0A0604" stroke-width="2" fill="none" opacity="0.15" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Persistent Sprout & Growing Plant -->
+  <g id="sprout-g" style="transform-origin:0px 44px">
+    <path id="sprout-stem" d="M0 44 C-6 25 5 -10 -3 -50 C-10 -90 6 -130 -4 -170 C-12 -210 4 -235 0 -252"
+      stroke="url(#stemGrad)" stroke-width="7" stroke-linecap="round" fill="none"
+      stroke-dasharray="310" stroke-dashoffset="310"/>
+
+    <!-- True Leaves (Pair unfurling at ~35% stem height, y = -65) -->
+    <g id="true-leaf-L" style="transform-origin:-4.6px -65px" opacity="0">
+      <circle cx="-4.6" cy="-65" r="4.6" fill="#5E8F43"/>
+      <path d="M-4.6 -65 Q-6.2 -67.2 -8.7 -70" fill="none" stroke="#5E8F43" stroke-width="2.6" stroke-linecap="round"/>
+      <g class="leaf-shift" transform="translate(-0.6 0)">
+        <path d="M-4 -65 C-25 -72 -48 -85 -55 -104 C-58 -118 -48 -128 -34 -124 C-20 -118 -8 -98 -4 -65 Z" fill="url(#leafGradL)" stroke="#4F7A3A" stroke-width="0.8"/>
+        <path d="M-4 -65 C-18 -80 -32 -98 -44 -114" stroke="#4F7A3A" stroke-width="1.2" fill="none" opacity="0.7"/>
+        <path d="M-14 -78 C-22 -85 -30 -88 -38 -92" stroke="#4F7A3A" stroke-width="0.6" fill="none" opacity="0.4"/>
+        <path d="M-22 -90 C-32 -96 -38 -98 -44 -101" stroke="#4F7A3A" stroke-width="0.6" fill="none" opacity="0.4"/>
+        <path d="M-8 -70 C-20 -80 -32 -95 -40 -110" stroke="url(#leafGloss)" stroke-width="4.5" fill="none" opacity="0.75" stroke-linecap="round"/>
+        <path class="leaf-glow-rim" d="M-4 -65 C-25 -72 -48 -85 -55 -104 C-58 -118 -48 -128 -34 -124 C-20 -118 -8 -98 -4 -65 Z" fill="none" stroke="#F6C26B" stroke-width="2.5" opacity="0"/>
+      </g>
+    </g>
+
+    <g id="true-leaf-R" style="transform-origin:-4.3px -60px" opacity="0">
+      <circle cx="-4.3" cy="-60" r="4.6" fill="#5E8F43"/>
+      <path d="M-4.3 -60 Q-1.6 -60.8 0.6 -64" fill="none" stroke="#5E8F43" stroke-width="2.6" stroke-linecap="round"/>
+      <g class="leaf-shift" transform="translate(-8.3 0)">
+        <path d="M4 -60 C25 -67 48 -80 55 -99 C58 -113 48 -123 34 -119 C20 -113 8 -93 4 -60 Z" fill="url(#leafGradR)" stroke="#4F7A3A" stroke-width="0.8"/>
+        <path d="M4 -60 C18 -75 32 -93 44 -109" stroke="#4F7A3A" stroke-width="1.2" fill="none" opacity="0.7"/>
+        <path d="M14 -73 C22 -80 30 -83 38 -87" stroke="#4F7A3A" stroke-width="0.6" fill="none" opacity="0.4"/>
+        <path d="M22 -85 C32 -91 38 -93 44 -96" stroke="#4F7A3A" stroke-width="0.6" fill="none" opacity="0.4"/>
+        <path d="M8 -65 C20 -75 32 -90 40 -105" stroke="url(#leafGloss)" stroke-width="4.5" fill="none" opacity="0.75" stroke-linecap="round"/>
+        <path class="leaf-glow-rim" d="M4 -60 C25 -67 48 -80 55 -99 C58 -113 48 -123 34 -119 C20 -113 8 -93 4 -60 Z" fill="none" stroke="#F6C26B" stroke-width="2.5" opacity="0"/>
+      </g>
+    </g>
+
+    <!-- Cotyledon leaves ride upward with the stem tip. -->
+    <g id="cot-tip-group">
+      <g id="cot-L" style="transform-origin:0px -90px" opacity="0">
+        <circle cx="0" cy="-90" r="4.6" fill="#5E8F43"/>
+        <path d="M0 -90 Q-1.5 -91.5 -3.2 -94.5" fill="none" stroke="#5E8F43" stroke-width="2.6" stroke-linecap="round"/>
+        <g class="leaf-shift" transform="translate(4 0)">
+          <path d="M-4 -90 C-20 -96 -38 -108 -42 -124 C-44 -136 -36 -144 -24 -140 C-14 -136 -6 -120 -4 -90 Z" fill="url(#leafGradL)" stroke="#4F7A3A" stroke-width="0.6"/>
+          <path d="M-4 -90 C-12 -100 -22 -116 -32 -132" stroke="#4F7A3A" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M-10 -100 C-16 -108 -22 -112" stroke="#4F7A3A" stroke-width="0.5" fill="none" opacity="0.35"/>
+          <path d="M-14 -110 C-22 -118 -28 -122" stroke="#4F7A3A" stroke-width="0.5" fill="none" opacity="0.3"/>
+          <path d="M-6 -94 C-14 -100 -24 -112 -30 -126" stroke="url(#leafGloss)" stroke-width="4" fill="none" opacity="0.7" stroke-linecap="round"/>
+          <path class="leaf-glow-rim" d="M-4 -90 C-20 -96 -38 -108 -42 -124 C-44 -136 -36 -144 -24 -140 C-14 -136 -6 -120 -4 -90 Z" fill="none" stroke="#F6C26B" stroke-width="2" opacity="0"/>
+        </g>
+      </g>
+      <g id="cot-R" style="transform-origin:0px -90px" opacity="0">
+        <circle cx="0" cy="-90" r="4.6" fill="#5E8F43"/>
+        <path d="M0 -90 Q1.5 -91.5 3.2 -94.5" fill="none" stroke="#5E8F43" stroke-width="2.6" stroke-linecap="round"/>
+        <g class="leaf-shift" transform="translate(-4 0)">
+          <path d="M4 -90 C20 -96 38 -108 42 -124 C44 -136 36 -144 24 -140 C14 -136 6 -120 4 -90 Z" fill="url(#leafGradR)" stroke="#4F7A3A" stroke-width="0.6"/>
+          <path d="M4 -90 C12 -100 22 -116 32 -132" stroke="#4F7A3A" stroke-width="1" fill="none" opacity="0.6"/>
+          <path d="M10 -100 C16 -108 22 -112" stroke="#4F7A3A" stroke-width="0.5" fill="none" opacity="0.35"/>
+          <path d="M14 -110 C22 -118 28 -122" stroke="#4F7A3A" stroke-width="0.5" fill="none" opacity="0.3"/>
+          <path d="M14 -96 C24 -106 34 -118 38 -128" stroke="#2A1A0A" stroke-width="2" fill="none" opacity="0.08" stroke-linecap="round"/>
+          <path class="leaf-glow-rim" d="M4 -90 C20 -96 38 -108 42 -124 C44 -136 36 -144 24 -140 C14 -136 6 -120 4 -90 Z" fill="none" stroke="#F6C26B" stroke-width="2" opacity="0"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  </g><!-- /plant-assembly -->
+
+  <!-- Burst Particles -->
+  <g id="particles">
+    <ellipse class="sp" cx="0" cy="40" rx="4" ry="2.8" fill="#A08060" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="3" ry="2" fill="#8B6A48" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="5" ry="3" fill="#7A5838" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="2.5" ry="1.8" fill="#C8A878" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="3.5" ry="2.2" fill="#6B4828" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="4.5" ry="2.5" fill="#A08868" opacity="0"/>
+    <circle class="sp" cx="0" cy="40" r="2" fill="#8B7050" opacity="0"/>
+    <circle class="sp" cx="0" cy="40" r="3" fill="#7A5838" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="3" ry="1.8" fill="#9B7A58" opacity="0"/>
+    <circle class="sp" cx="0" cy="40" r="2.5" fill="#6B4828" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="4" ry="2" fill="#8B6A48" opacity="0"/>
+    <circle class="sp" cx="0" cy="40" r="1.8" fill="#A08868" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="3.5" ry="2.5" fill="#7A5838" opacity="0"/>
+    <circle class="sp" cx="0" cy="40" r="2.2" fill="#9B8060" opacity="0"/>
+    <ellipse class="sp" cx="0" cy="40" rx="2.8" ry="1.6" fill="#8B7050" opacity="0"/>
+    <circle class="sp" cx="0" cy="40" r="2.8" fill="#A08060" opacity="0"/>
+  </g>
+  </svg>
+</div>
+</div><!-- /world-layer -->
+<div id="scene3-plant-halo" aria-hidden="true"></div>
+
+<!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+     SCENE 0: THE SEED
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+<section class="scene active" id="scene-0" data-scene="0" aria-label="Scene 1: The seed">
+
+<!-- Staged film-title sequence (Beats 1-3) -->
+<div id="beats-stage" aria-live="polite">
+  <div class="beat" id="beat-1">
+    <span class="b-word">I</span>
+    <span class="b-word">heard</span>
+    <span class="b-word">you</span>
+    <span class="b-word">like</span>
+    <span class="b-word">sunflowers,</span>
+  </div>
+  <div class="beat" id="beat-2">
+    <span class="b-word">so</span>
+    <span class="b-word">I</span>
+    <span class="b-word">planted</span>
+    <span class="b-word">one</span>
+  </div>
+  <div class="beat" id="beat-3">
+    <span class="b-char">j</span><span class="b-char">u</span><span class="b-char">s</span><span class="b-char">t</span><span class="b-char">&nbsp;</span><span class="b-char">f</span><span class="b-char">o</span><span class="b-char">r</span><span class="b-char">&nbsp;</span><span class="b-char">y</span><span class="b-char">o</span><span class="b-char">u</span><span class="b-char">.</span>
+  </div>
+</div>
+
+<div id="s1-content">
+  <div id="seed-slot">
+    <button id="seed-hitbox" aria-label="Tap the seed to begin" aria-describedby="s1-hint"></button>
+  </div>
+  <div id="hint-sig-group">
+    <p id="s1-hint">tap the seed, and watch it grow</p>
+    <p id="s1-sig">made with love, from me to you</p>
+  </div>
+</div>
+</section>
+
+<!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+     SCENE 1: A MONTH LATER (Scene 2 in story)
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+<section class="scene" id="scene-1" data-scene="1" aria-label="Scene 2: A month later">
+<div id="s2-text-glow" aria-hidden="true"></div>
+<div id="s2-content">
+
+  <!-- Beat 1: Intro quote -->
+  <div id="s2-beat1-wrap">
+    <p id="s2-quote">
+      <span class="s2-word">A</span>
+      <span class="s2-word">month</span>
+      <span class="s2-word">ago,</span>
+      <span class="s2-word">this</span>
+      <br class="s2-caption-break">
+      <span class="s2-word">was</span>
+      <span class="s2-word">just</span>
+      <span class="s2-word">a</span>
+      <span class="s2-word">seed.</span>
+    </p>
+  </div>
+
+  <!-- Beat 2: Counter hero -->
+  <div id="s2-counter-block">
+    <div id="s2-main-counter">
+      <div class="digit-strip-wrap">
+        <div id="month-digit-strip" class="digit-strip">
+          <span class="digit">0</span>
+          <span class="digit">1</span>
+        </div>
+      </div>
+      <div class="unit-wrap">
+        <span id="month-unit-text">month</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="s2-personal-mask">
+    <p id="s2-personal-line">
+      <span class="personal-reveal-line">You didn't just show up in my</span>
+      <span class="personal-reveal-line">days. You made them softer.</span>
+    </p>
+  </div>
+
+  <!-- Closing line -->
+  <p id="s2-closing">and somehow it already<span class="s2-closing-break"><br></span> feels like home.</p>
+
+  <div id="s2-plant-date">
+    <svg class="date-connector" viewBox="0 0 40 40" aria-hidden="true">
+      <path class="date-connector-path" d="M0 20 C10 20 14 4 24 4 S32 20 40 20"/>
+    </svg>
+    <span class="plant-date-tag">planted on 11 October</span>
+  </div>
+
+  <!-- Scene 2 Continue cue -->
+  <div id="s2-continue-wrap">
+    <button id="s2-continue-btn" class="continue-btn" aria-label="Continue to Scene 3">
+      <span>continue</span>
+      <svg class="continue-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+</div>
+</section>
+
+<!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+     SCENE 2: PLACEHOLDER FOR SCENE 3
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+<section class="scene" id="scene-2" data-scene="2" aria-label="Scene 3: Our first month">
+  <div id="scene3-content">
+    <div id="scene3-moments">
+      <div class="s3-intro" id="scene3-intro" aria-hidden="true">
+        <h2 class="s3-intro-statement"><span class="s3-intro-word">These</span> <span class="s3-intro-word">might</span> <span class="s3-intro-word">be</span> <span class="s3-intro-word">my</span> <span class="s3-intro-word">favorite</span> <span class="s3-intro-word">memories</span> <span class="s3-intro-word">from</span> <span class="s3-intro-word">this</span> <span class="s3-intro-word">past</span> <span class="s3-intro-word">month.</span></h2>
+        <p class="s3-intro-support">so I kept them here for you.</p>
+      </div>
+      <article class="s3-moment" data-moment="0" aria-hidden="true">
+        <p class="s3-title">the day I asked you</p>
+        <h2 class="s3-statement s3-proposal"><span class="s3-word">I've </span><span class="s3-word">never </span><span class="s3-word">been </span><span class="s3-word">so </span><span class="s3-word">scared </span><span class="s3-word">of </span><span class="s3-word">one </span><span class="s3-word">answer.</span></h2>
+        <p class="s3-support">I was terrified and hopeful at the same time, and then you said yes. Everything went quiet, in the best way. Part of me has been smiling ever since.</p>
+      </article>
+      <article class="s3-moment" data-moment="1" aria-hidden="true">
+        <p class="s3-title">our first video call</p>
+        <h2 class="s3-statement s3-video-call" aria-label="Somewhere in that call, I stopped being nervous and started being myself."><span class="s3-line-mask"><span class="s3-line">Somewhere in that call,</span></span><span class="s3-line-mask"><span class="s3-line">I stopped being nervous</span></span><span class="s3-line-mask"><span class="s3-line">and started being myself.</span></span></h2>
+        <p class="s3-support">I didn't expect to feel so at home with someone through a screen. I just knew I didn't want it to end, and I remember hoping there would be a hundred more calls just like it.</p>
+      </article>
+      <article class="s3-moment" data-moment="2" aria-hidden="true">
+        <p class="s3-title">the night you taught me</p>
+        <h2 class="s3-statement s3-exam">You had an exam the next day, so you taught it to me.</h2>
+        <p class="s3-support s3-exam-support">You were really just preparing yourself, and I got to sit there listening to you explain psychology. Best study session I was never studying for.</p>
+      </article>
+    </div>
+    <div id="scene3-controls">
+      <button id="scene3-next" type="button" aria-label="Next moment"><span>next</span><svg class="s3-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div id="scene3-progress" aria-label="Moment 1 of 3">
+      <span class="s3-progress-slot"><span class="s3-progress-dot is-active"></span></span>
+      <span class="s3-progress-slot"><span class="s3-progress-dot"></span></span>
+      <span class="s3-progress-slot"><span class="s3-progress-dot"></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+     SCENE 4: THE LETTER
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+<section class="scene" id="scene-3" data-scene="3" aria-label="Scene 4: A letter">
+  <div id="scene4-content">
+    <div id="letter-sheet" aria-label="A letter for Saanvi" tabindex="0">
+      <div class="letter-body">
+        <p class="letter-paragraph letter-greeting" data-letter="0">Saanvi,</p>
+        <p class="letter-paragraph" data-letter="1">It's been one month, and it's honestly been the best month of my life. I wanted you to hear that plainly from me, before anything fancy.</p>
+        <p class="letter-paragraph" data-letter="2">I wasn't perfect, and I know it. A few silly mistakes here and there, and you never made me feel bad about them. That meant a lot.</p>
+        <p class="letter-paragraph" data-letter="3">What I've figured out in a month is that I don't just want to be happy with you. I want to be better for you. Not perfect, just someone who shows up, listens, and gets it right more often than he gets it wrong.</p>
+        <p class="letter-paragraph" data-letter="4">You make the hard days lighter and the good days feel worth keeping. I love this. I love us, even the messy parts.</p>
+        <p class="letter-paragraph" data-letter="5">So here's to month two. I can't promise I'll never mess up, but I promise I'll keep trying, and I'll keep choosing you.</p>
+        <p class="letter-paragraph letter-signoff" data-letter="6">Always,<span class="letter-signoff-name">Kathan</span></p>
+      </div>
+    </div>
+    <div id="letter-actions">
+      <button id="letter-continue" type="button" aria-label="Continue to Scene 5"><span>continue</span><svg class="s3-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+     SCENE 5: THE BLOOM
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+<section class="scene" id="scene-4" data-scene="4" aria-label="Scene 5: Bloom">
+  <div id="scene5-final-text"><h1 id="scene5-main">one for every reason<br>I'm glad it's you.</h1><p id="scene5-sub">here's to month two.</p></div>
+  <div id="memory-window" role="img" aria-label="Photos of us" tabindex="0">
+    <div class="memory-bob">
+      <svg viewBox="0 0 500 500" aria-hidden="true">
+        <defs>
+          <linearGradient id="memoryPetalGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFE27A"/><stop offset="52%" stop-color="#F6B93B"/><stop offset="100%" stop-color="#E39B1B"/>
+          </linearGradient>
+          <linearGradient id="memorySepalGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6A994E"/><stop offset="100%" stop-color="#4F7A3A"/>
+          </linearGradient>
+        </defs>
+        <g id="memory-sepals"></g>
+        <g id="memory-petals-back"></g>
+        <g id="memory-petals-front"></g>
+      </svg>
+      <div class="memory-photo-rim">
+        <div class="memory-photo-stack"><img alt=""><img alt=""></div>
+        <div class="memory-seed-dots" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+  <button id="music-control" type="button" aria-label="Turn music on" aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path class="music-on-mark" d="M16 9a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path class="music-off-mark" d="m16 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="display:none"/></svg>
+    <span id="music-label">tap for music</span>
+  </button>
+</section>
+
+</div><!-- /stage -->
+<div id="scene4-toast" role="status" aria-live="polite">scene 4 coming next</div>
+
+<audio id="bgm" src="./music.mp3" loop preload="none" aria-hidden="true"></audio>
+
+<script>
+/* ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â SCENE SYSTEM ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â */
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+gsap.globalTimeline.resume();
+if (gsap.ticker && gsap.ticker.wake) gsap.ticker.wake();
+let current = 0, transitioning = false;
+const scenes = document.querySelectorAll('.scene');
+window.sceneHooks = {};
+
+function goTo(i) {
+  if (i >= scenes.length) {
+    const message = document.getElementById('scene4-toast');
+    if (message) {
+      message.textContent = `scene ${i + 1} coming next`;
+      message.style.visibility = 'visible';
+      gsap.fromTo(message, { opacity: 0, y: reduced ? 0 : 12 }, { opacity: 1, y: 0, duration: reduced ? 0.15 : 0.3, ease: 'power2.out', onComplete() {
+        gsap.to(message, { opacity: 0, y: reduced ? 0 : -6, duration: reduced ? 0.15 : 0.35, delay: 1.6, onComplete: () => { message.style.visibility = 'hidden'; } });
+      } });
+    }
+    return;
+  }
+  if (transitioning || i < 0 || i >= scenes.length || i === current) return;
+  const plantHitbox = document.getElementById('plant-hitbox');
+  if (plantHitbox) plantHitbox.style.pointerEvents = i === 0 ? 'none' : 'auto';
+  transitioning = true;
+  const from = scenes[current], to = scenes[i];
+  const d = reduced ? 0.2 : 0.6;
+  const exitH = window.sceneHooks[current]?.exit;
+  const enterH = window.sceneHooks[i]?.enter;
+  const tl = gsap.timeline({
+    onComplete() {
+      from.classList.remove('active'); from.style.pointerEvents = 'none';
+      to.classList.add('active'); to.style.pointerEvents = 'auto';
+      const etl = gsap.timeline({ onComplete() { transitioning = false; } });
+      if ((enterH && !reduced) || ((i === 2 || i === 3) && enterH)) enterH(to, etl, current);
+      else {
+        gsap.set(to, { opacity: 0 });
+        etl.to(to, { opacity: 1, duration: d, ease: 'power2.out' });
+        const ph = to.querySelector('#scene-placeholder');
+        if (ph) etl.to(ph, { opacity: 1, duration: 0.5 }, '-=0.1');
+      }
+      current = i;
+    }
+  });
+  if (exitH && (!reduced || current === 2 || current === 3)) exitH(from, tl, i);
+  else tl.to(from, { opacity: 0, duration: d, ease: 'power2.in' });
+}
+
+document.addEventListener('keydown', e => {
+  if (!transitioning && current === 3 && window.handleScene4Key && window.handleScene4Key(e.key)) {
+    e.preventDefault();
+    return;
+  }
+  if (!transitioning && current === 2 && window.handleScene3Key && window.handleScene3Key(e.key)) {
+    e.preventDefault();
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+});
+
+/* ═══════════════════════════════════════════════════════════
+   INTERACTIVE BACKGROUND: SWIMMING THROUGH WATER (~900 PARTICLES)
+═══════════════════════════════════════════════════════════ */
+(function initWaterBackground() {
+  const canvas = document.getElementById('water-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let width = 0, height = 0;
+  let dpr = 1;
+  let animationId = null;
+  let isPaused = false;
+
+  const colors = [
+    { r: 246, g: 194, b: 107 }, // warm gold #F6C26B
+    { r: 242, g: 179, b: 160 }, // blush #F2B3A0
+    { r: 255, g: 244, b: 227 }  // cream #FFF4E3
+  ];
+  const sprites = colors.map(c => {
+    const sCanvas = document.createElement('canvas');
+    const sDim = 28;
+    sCanvas.width = sDim;
+    sCanvas.height = sDim;
+    const sCtx = sCanvas.getContext('2d');
+    const grad = sCtx.createRadialGradient(sDim/2, sDim/2, 0, sDim/2, sDim/2, sDim/2);
+    grad.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, 1)`);
+    grad.addColorStop(0.35, `rgba(${c.r}, ${c.g}, ${c.b}, 0.8)`);
+    grad.addColorStop(0.7, `rgba(${c.r}, ${c.g}, ${c.b}, 0.22)`);
+    grad.addColorStop(1, `rgba(${c.r}, ${c.g}, ${c.b}, 0)`);
+    sCtx.fillStyle = grad;
+    sCtx.fillRect(0, 0, sDim, sDim);
+    return sCanvas;
+  });
+
+  const PARTICLE_COUNT = 900;
+  const particles = [];
+  let letterParticleDensity = 1;
+  window.setLetterParticleDensity = active => {
+    letterParticleDensity = active ? .5 : 1;
+    if (reduced && ctx) {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        if (letterParticleDensity < 1 && !p.isHeart && i % 2 === 1) continue;
+        ctx.globalAlpha = p.alpha;
+        ctx.drawImage(sprites[p.spriteIdx], p.x - p.radius * 2, p.y - p.radius * 2, p.radius * 4, p.radius * 4);
+      }
+    }
+  };
+  let particleTransitionActive = false;
+  window.setParticleTransition = active => {
+    particleTransitionActive = active;
+    window.scene2HeartPaused = active;
+    if (active && particles.length > 360) particles.length = 360;
+    if (!active && particles.length < PARTICLE_COUNT) createParticles();
+  };
+
+  function createParticles() {
+    particles.length = 0;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: 0,
+        vy: 0,
+        radius: 1 + Math.random() * 1.5,
+        spriteIdx: Math.floor(Math.random() * 3),
+        alpha: 0.35 + Math.random() * 0.35,
+        phase: Math.random() * Math.PI * 2,
+        isHeart: false,
+        isOuterHeart: false,
+        arcFrac: 0,
+        heartWeight: 0
+      });
+    }
+  }
+
+  // Pre-calculated Arc-Length Table for Heart Curve
+  const HEART_SAMPLES = 800;
+  const samplePoints = [];
+  const arcLengths = [0];
+  let totalPerimeter = 0;
+
+  for (let i = 0; i <= HEART_SAMPLES; i++) {
+    const t = (i / HEART_SAMPLES) * Math.PI * 2;
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+    samplePoints.push({ t, x, y });
+    if (i > 0) {
+      const prev = samplePoints[i - 1];
+      const dx = x - prev.x;
+      const dy = y - prev.y;
+      totalPerimeter += Math.sqrt(dx * dx + dy * dy);
+      arcLengths.push(totalPerimeter);
+    }
+  }
+
+  function getHeartPointByArc(fraction, cx, cy, scale, yOffset) {
+    const targetDist = ((fraction % 1 + 1) % 1) * totalPerimeter;
+    let low = 0, high = HEART_SAMPLES;
+    while (low < high) {
+      const mid = (low + high) >> 1;
+      if (arcLengths[mid] < targetDist) low = mid + 1;
+      else high = mid;
+    }
+    const idx = Math.max(1, low);
+    const segStart = arcLengths[idx - 1];
+    const segEnd = arcLengths[idx];
+    const segFrac = segEnd > segStart ? (targetDist - segStart) / (segEnd - segStart) : 0;
+    const p0 = samplePoints[idx - 1];
+    const p1 = samplePoints[idx];
+    const bx = p0.x + (p1.x - p0.x) * segFrac;
+    const by = p0.y + (p1.y - p0.y) * segFrac;
+
+    return {
+      x: cx + bx * scale,
+      y: cy + by * scale - yOffset
+    };
+  }
+
+  // Ripples: capped at 6 alive at once, fade within 0.9s, edge fade to prevent trails
+  const ripples = [];
+  function addRipple(x, y) {
+    if (particleTransitionActive) return;
+    if (ripples.length >= 6) ripples.shift();
+    ripples.push({
+      x, y,
+      r: 4,
+      maxR: 65 + Math.random() * 20,
+      life: 1.0
+    });
+  }
+
+  let ptrX = -2000, ptrY = -2000;
+  let prevPtrX = -2000, prevPtrY = -2000;
+  let ptrVx = 0, ptrVy = 0;
+  let stillTimer = null;
+  let heartActive = false;
+  let heartCenter = { x: 0, y: 0 };
+  let heartReleaseTimer = null;
+  let userHasInteracted = false;
+  let idleTimer = null;
+
+  function formHeart(cx, cy) {
+    heartActive = true;
+    heartCenter = { x: cx, y: cy };
+
+    const indexed = particles.map((p, idx) => {
+      const dx = p.x - cx;
+      const dy = p.y - cy;
+      return { idx, dist2: dx * dx + dy * dy };
+    });
+    indexed.sort((a, b) => a.dist2 - b.dist2);
+
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].isHeart = false;
+      particles[i].isOuterHeart = false;
+    }
+
+    const primaryCount = 260;
+    for (let i = 0; i < primaryCount; i++) {
+      const p = particles[indexed[i].idx];
+      p.isHeart = true;
+      p.isOuterHeart = false;
+      p.arcFrac = i / primaryCount;
+    }
+
+    const outerCount = 100;
+    for (let i = 0; i < outerCount; i++) {
+      const p = particles[indexed[primaryCount + i].idx];
+      p.isHeart = true;
+      p.isOuterHeart = true;
+      p.arcFrac = i / outerCount;
+    }
+  }
+
+  function dissolveHeart() {
+    if (!heartActive) return;
+    heartActive = false;
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      if (p.isHeart) {
+        const dx = p.x - heartCenter.x;
+        const dy = p.y - heartCenter.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        p.vx += (dx / dist) * (1.8 + Math.random() * 2.2);
+        p.vy += (dy / dist) * (1.8 + Math.random() * 2.2);
+        p.isHeart = false;
+        p.isOuterHeart = false;
+      }
+    }
+    addRipple(heartCenter.x, heartCenter.y);
+  }
+
+  // Pointer Movement & Leaf Lean Interaction
+  let lastRippleDistance = 0;
+  let targetNormX = 0, targetNormY = 0;
+  let curNormX = 0, curNormY = 0;
+  let plantLean = 0;
+
+  function onPointerMove(x, y) {
+    userHasInteracted = true;
+    if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+
+    targetNormX = (x / width - 0.5) * 2;
+    targetNormY = (y / height - 0.5) * 2;
+
+    if (prevPtrX < -1000) {
+      prevPtrX = x; prevPtrY = y;
+    }
+    ptrVx = x - prevPtrX;
+    ptrVy = y - prevPtrY;
+    prevPtrX = x; prevPtrY = y;
+    ptrX = x; ptrY = y;
+
+    const speed = Math.sqrt(ptrVx * ptrVx + ptrVy * ptrVy);
+
+    // Push nearby particles aside like water
+    const pushRadius = 115;
+    const pushRadius2 = pushRadius * pushRadius;
+
+    if (speed > 0.4) {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const dx = p.x - x;
+        const dy = p.y - y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < pushRadius2 && d2 > 0) {
+          const dist = Math.sqrt(d2);
+          const force = (1 - dist / pushRadius) * Math.min(speed * 0.16, 2.4);
+          p.vx += ptrVx * force * 0.22 + (dx / dist) * force * 1.8;
+          p.vy += ptrVy * force * 0.22 + (dy / dist) * force * 1.8;
+          p.vx += (-dy / dist) * force * 0.45;
+          p.vy += (dx / dist) * force * 0.45;
+        }
+      }
+
+      lastRippleDistance += speed;
+      if (lastRippleDistance > 28) {
+        addRipple(x, y);
+        lastRippleDistance = 0;
+      }
+    }
+
+    if (heartActive) {
+      dissolveHeart();
+    }
+
+    if (stillTimer) clearTimeout(stillTimer);
+    stillTimer = setTimeout(() => {
+      if (!window.scene2HeartPaused) formHeart(ptrX, ptrY);
+    }, 700);
+  }
+
+  window.addEventListener('pointermove', (e) => {
+    onPointerMove(e.clientX, e.clientY);
+  }, { passive: true });
+
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches.length > 0) {
+      const t = e.touches[0];
+      onPointerMove(t.clientX, t.clientY);
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 0) {
+      const t = e.touches[0];
+      onPointerMove(t.clientX, t.clientY);
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    if (stillTimer) clearTimeout(stillTimer);
+    if (heartActive) {
+      if (heartReleaseTimer) clearTimeout(heartReleaseTimer);
+      heartReleaseTimer = setTimeout(() => {
+        dissolveHeart();
+      }, 3000);
+    }
+  }, { passive: true });
+
+  // Idle heart: after 7 seconds of no interaction, forms once at center
+  idleTimer = setTimeout(() => {
+    if (!userHasInteracted && !heartActive && !window.scene2HeartPaused) {
+      const cx = width / 2;
+      const cy = height * 0.42;
+      formHeart(cx, cy);
+      setTimeout(() => {
+        dissolveHeart();
+      }, 3000);
+    }
+  }, 7000);
+
+  // Dynamic Text & Plant Avoidance (140px calm zone)
+  function getVisibleTextAndPlantRects() {
+    const list = [];
+    const elements = [
+      document.getElementById('beat-1'),
+      document.getElementById('beat-2'),
+      document.getElementById('beat-3'),
+      document.getElementById('s1-hint'),
+      document.getElementById('s1-sig'),
+      document.getElementById('s2-quote'),
+      document.getElementById('s2-main-counter'),
+      document.getElementById('s2-closing'),
+      document.querySelector('#scene3-intro[aria-hidden="false"]'),
+      ...document.querySelectorAll('.s3-moment[aria-hidden="false"]'),
+      ...(document.getElementById('scene-3')?.classList.contains('active') ? [document.getElementById('letter-sheet')] : []),
+      document.getElementById('world-container')
+    ];
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+      if (el) {
+        const style = window.getComputedStyle(el);
+        const op = parseFloat(style.opacity);
+        if (op > 0.05 && style.display !== 'none' && style.visibility !== 'hidden') {
+          const r = el.getBoundingClientRect();
+          if (r.width > 0 && r.height > 0) {
+            list.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+          }
+        }
+      }
+    }
+    return list;
+  }
+
+  function distToRect(px, py, r) {
+    const dx = Math.max(r.left - px, 0, px - r.right);
+    const dy = Math.max(r.top - py, 0, py - r.bottom);
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  let textRects = [];
+  let frameCount = 0;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    if (particles.length === 0) createParticles();
+    textRects = getVisibleTextAndPlantRects();
+  }
+  window.refreshParticleCalmRects = () => { textRects = getVisibleTextAndPlantRects(); };
+  window.addEventListener('resize', resize);
+  resize();
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      isPaused = true;
+      if (animationId) cancelAnimationFrame(animationId);
+    } else {
+      isPaused = false;
+      lastTime = performance.now();
+      animationId = requestAnimationFrame(render);
+    }
+  });
+
+  // Reduced motion static fallback
+  if (reduced) {
+    function drawStatic() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        if (letterParticleDensity < 1 && !p.isHeart && i % 2 === 1) continue;
+        ctx.globalAlpha = p.alpha;
+        const sprite = sprites[p.spriteIdx];
+        ctx.drawImage(sprite, p.x - p.radius * 2, p.y - p.radius * 2, p.radius * 4, p.radius * 4);
+      }
+    }
+    drawStatic();
+    window.addEventListener('click', (e) => {
+      formHeart(e.clientX, e.clientY);
+      setTimeout(() => dissolveHeart(), 2500);
+      drawStatic();
+    });
+    return;
+  }
+
+  // 60fps Animation Loop
+  let lastTime = performance.now();
+  let time = 0;
+  let heartAnimTime = 0;
+  const sproutStem = document.getElementById('sprout-g');
+  const worldCont = document.getElementById('world-container');
+
+  function render(now) {
+    if (isPaused) return;
+    const dt = Math.min((now - lastTime) / 1000, 0.05);
+    lastTime = now;
+    time += dt;
+    if (heartActive) heartAnimTime += dt;
+    frameCount++;
+
+    // Parallax & Leaves Lean
+    curNormX += (targetNormX - curNormX) * 0.05;
+    curNormY += (targetNormY - curNormY) * 0.05;
+
+    // In Scene 2: Plant leans gently toward pointer (up to 4 deg)
+    if (current === 1 && sproutStem && worldCont) {
+      const plantCenterX = width / 2 + (window.innerWidth <= 768 ? 0 : -window.innerWidth * 0.18);
+      const dx = (ptrX - plantCenterX) / width;
+      const targetLean = Math.max(-4, Math.min(4, dx * 9));
+      plantLean += (targetLean - plantLean) * 0.05;
+      sproutStem.style.transform = `rotate(${plantLean}deg)`;
+    }
+
+    ctx.clearRect(0, 0, width, height);
+
+    // Render ripples: fade out within 0.9s, smoothly clip before screen edges
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rip = ripples[i];
+      rip.r += 42 * dt;
+      rip.life -= dt / 0.9;
+      if (rip.life <= 0 || rip.r >= rip.maxR) {
+        ripples.splice(i, 1);
+        continue;
+      }
+      const edgeDist = Math.min(rip.x, width - rip.x, rip.y, height - rip.y);
+      const edgeFade = Math.max(0, Math.min(1, (edgeDist - 8) / 25));
+      const alpha = Math.max(0, rip.life * 0.32) * edgeFade;
+      if (alpha > 0.005) {
+        ctx.beginPath();
+        ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 244, 227, ${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // 1.6s heart pulse cycle
+    const heartPulse = heartActive
+      ? 1.0 + 0.04 * Math.sin(heartAnimTime * (Math.PI * 2 / 1.6))
+      : 1.0;
+
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+
+      if (p.isHeart && heartActive) {
+        p.heartWeight += (1 - p.heartWeight) * 0.06;
+        const scale = (p.isOuterHeart ? 7.5 * 1.12 : 7.5) * heartPulse;
+        const yOff = (p.isOuterHeart ? 15 * 1.12 : 15) * heartPulse;
+        const target = getHeartPointByArc(p.arcFrac, heartCenter.x, heartCenter.y, scale, yOff);
+
+        const shimmerX = (Math.random() - 0.5) * 1.2;
+        const shimmerY = (Math.random() - 0.5) * 1.2;
+
+        p.x += (target.x + shimmerX - p.x) * 0.068;
+        p.y += (target.y + shimmerY - p.y) * 0.068;
+      } else {
+        if (p.heartWeight > 0.01) {
+          p.heartWeight += (0 - p.heartWeight) * 0.06;
+        }
+
+        const angle = Math.sin(p.x * 0.0016 + time * 0.35 + p.phase) * 1.25 +
+                      Math.cos(p.y * 0.0018 + time * 0.28) * 1.05;
+        const speed = 0.42 + 0.18 * Math.sin(p.x * 0.002 + p.y * 0.002);
+        p.vx += Math.cos(angle) * speed * 0.055;
+        p.vy += Math.sin(angle) * speed * 0.055;
+
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < -20) p.x = width + 20;
+        else if (p.x > width + 20) p.x = -20;
+        if (p.y < -20) p.y = height + 20;
+        else if (p.y > height + 20) p.y = -20;
+      }
+
+      // Proximity check: fade opacity down to 15% within 140px of visible text & plant
+      let minDist = 9999;
+      for (let j = 0; j < textRects.length; j++) {
+        const d = distToRect(p.x, p.y, textRects[j]);
+        if (d < minDist) minDist = d;
+      }
+      let textDim = 1.0;
+      if (minDist < 140) {
+        textDim = 0.15 + 0.85 * (minDist / 140);
+      }
+
+      let size = p.radius * 2.8;
+      let alpha = p.alpha * textDim;
+      if (p.isHeart) {
+        if (p.isOuterHeart) {
+          alpha = 0.25 * textDim;
+          size = 2.4 * 2.8;
+        } else {
+          alpha = Math.min(1.0, (0.75 + Math.random() * 0.25) * textDim);
+          size = (2.2 + Math.random() * 1.1) * 2.8;
+        }
+      }
+
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      const sprite = sprites[p.spriteIdx];
+      if (letterParticleDensity >= 1 || p.isHeart || i % 2 === 0) ctx.drawImage(sprite, p.x - size, p.y - size, size * 2, size * 2);
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+    animationId = requestAnimationFrame(render);
+  }
+
+  animationId = requestAnimationFrame(render);
+})();
+
+/* ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â
+   SCENE 0 & SCENE 1 INTERACTION LOGIC
+ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â */
+(function initExperience() {
+  const stage         = document.getElementById('stage');
+  const worldLayer    = document.getElementById('world-layer');
+  const worldCont     = document.getElementById('world-container');
+  const skipBtn       = document.getElementById('skip-btn');
+
+  // Scene 1 elements
+  const beat1         = document.getElementById('beat-1');
+  const beat2         = document.getElementById('beat-2');
+  const beat3         = document.getElementById('beat-3');
+  const beat1Words    = beat1.querySelectorAll('.b-word');
+  const beat2Words    = beat2.querySelectorAll('.b-word');
+  const beat3Chars    = beat3.querySelectorAll('.b-char');
+
+  const soilMound     = document.getElementById('soil-mound-group');
+  const seedAssembly  = document.getElementById('seed-assembly');
+  const seedWhole     = document.getElementById('seed-whole');
+  const seedL         = document.getElementById('seed-L');
+  const seedR         = document.getElementById('seed-R');
+  const seedHalo      = document.getElementById('seed-halo');
+  const seedPulseRing = document.getElementById('seed-pulse-ring');
+  const hbGlow        = document.getElementById('hb-glow');
+  const hitbox        = document.getElementById('seed-hitbox');
+  const plantHitbox   = document.getElementById('plant-hitbox');
+  if (plantHitbox) plantHitbox.style.pointerEvents = current === 0 ? 'none' : 'auto';
+  const hint          = document.getElementById('s1-hint');
+  const sig           = document.getElementById('s1-sig');
+
+  // Sprout & leaves
+  const sproutStem    = document.getElementById('sprout-stem');
+  const sproutGroup   = document.getElementById('sprout-g');
+  const cotTipGroup   = document.getElementById('cot-tip-group');
+  const cotL          = document.getElementById('cot-L');
+  const cotR          = document.getElementById('cot-R');
+  const plantAssembly = document.getElementById('plant-assembly');
+  const heroSvg       = document.getElementById('hero-svg');
+  const trueLeafL     = document.getElementById('true-leaf-L');
+  const trueLeafR     = document.getElementById('true-leaf-R');
+  const particles     = document.querySelectorAll('.sp');
+
+  // Scene 2 elements
+  const s2QuoteWords  = document.querySelectorAll('.s2-word');
+  const s2CounterBlock= document.getElementById('s2-counter-block');
+  const monthStrip    = document.getElementById('month-digit-strip');
+  const monthUnitText = document.getElementById('month-unit-text');
+  const s2PersonalLines = document.querySelectorAll('.personal-reveal-line');
+  const s2Closing     = document.getElementById('s2-closing');
+  const s2PlantDate   = document.getElementById('s2-plant-date');
+  const dateConnectorPath = document.querySelector('.date-connector-path');
+  const s2ContinueBtn = document.getElementById('s2-continue-btn');
+  const scene3 = document.getElementById('scene-2');
+  const scene3Content = document.getElementById('scene3-content');
+  const scene3Moments = Array.from(document.querySelectorAll('.s3-moment'));
+  const scene3Next = document.getElementById('scene3-next');
+  const scene3Dots = Array.from(document.querySelectorAll('.s3-progress-dot'));
+  const scene3Halo = document.getElementById('scene3-plant-halo');
+  const scene3Controls = document.getElementById('scene3-controls');
+  const scene3Progress = document.getElementById('scene3-progress');
+  const scene3Intro = document.getElementById('scene3-intro');
+  const scene3IntroWords = scene3Intro.querySelectorAll('.s3-intro-word');
+  const scene3IntroSupport = scene3Intro.querySelector('.s3-intro-support');
+  const leafRims = {
+    cotyledons: document.querySelectorAll('#cot-L .leaf-glow-rim,#cot-R .leaf-glow-rim'),
+    trueLeaves: document.querySelectorAll('#true-leaf-L .leaf-glow-rim,#true-leaf-R .leaf-glow-rim')
+  };
+
+  function positionS2PlantDate() {
+    if (!s2PlantDate || window.innerWidth <= 768 || !soilMound) return;
+    try {
+      const mound = soilMound.getBoundingClientRect();
+      if (!mound.width || !mound.height) return;
+      const parentRect = s2PlantDate.parentElement.getBoundingClientRect();
+      const tag = s2PlantDate.querySelector('.plant-date-tag');
+      const tagHeight = tag.getBoundingClientRect().height;
+      s2PlantDate.style.left = `${mound.right + 24 - parentRect.left}px`;
+      s2PlantDate.style.top = `${window.innerHeight * .92 - tagHeight / 2 - parentRect.top}px`;
+    } catch (_) {}
+  }
+  window.addEventListener('resize', () => {
+    if (current === 1) window.setTimeout(positionS2PlantDate, 550);
+  });
+
+  let tapped = false;
+  let inSequence = true;
+  let introTl = null;
+  let seedGrowTl = null;
+
+  document.addEventListener('pointerdown', event => {
+    if (current === 1 && scene2Timeline && scene2Timeline.isActive()) {
+      scene2Timeline.progress(1);
+      return;
+    }
+    if (event.target.closest('button, a, input')) return;
+    if (current === 0 && tapped && seedGrowTl && seedGrowTl.isActive()) seedGrowTl.progress(1);
+    else if (current === 0 && introTl && introTl.isActive()) introTl.progress(1);
+    if (current === 1 && scene2Timeline && scene2Timeline.isActive()) scene2Timeline.progress(1);
+  });
+
+  /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ SEED IDLE LOOPS ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+  function startSeedLoops() {
+    if (reduced) {
+      gsap.set(seedHalo, { opacity: 0.35 });
+      return;
+    }
+    gsap.fromTo(seedHalo,
+      { opacity: 0.25 },
+      { opacity: 0.5, duration: 2.4, repeat: -1, yoyo: true, ease: 'sine.inOut' }
+    );
+    const ringTl = gsap.timeline({ repeat: -1, repeatDelay: 1.2 });
+    ringTl.fromTo(seedPulseRing,
+      { scale: 0.8, opacity: 0.45, transformOrigin: 'center center' },
+      { scale: 2.0, opacity: 0, duration: 1.8, ease: 'power2.out' }
+    );
+    const hb = gsap.timeline({ repeat: -1, repeatDelay: 0.7, delay: 1.5 });
+    hb.to(hbGlow, { opacity: 0.5, scale: 1.05, duration: 0.2, ease: 'power2.out', transformOrigin: 'center center' })
+      .to(hbGlow, { opacity: 0.1, scale: 1,    duration: 0.22, ease: 'power2.in' })
+      .to(hbGlow, { opacity: 0.4, scale: 1.03, duration: 0.18, ease: 'power2.out' }, '+=0.1')
+      .to(hbGlow, { opacity: 0.06, scale: 1,   duration: 0.35, ease: 'power2.in' });
+    gsap.to(seedWhole, {
+      scale: 1.025, duration: 2.8, repeat: -1, yoyo: true,
+      ease: 'sine.inOut', transformOrigin: '0px 38px'
+    });
+  }
+
+  /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ BEAT 4 & 5: SEED RISES & HINT/SIG REVEAL ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+  function startBeat4() {
+    inSequence = false;
+    window.removeEventListener('pointerdown', onScreenPointerDown);
+    if (skipBtn) {
+      gsap.to(skipBtn, { opacity: 0, duration: 0.3, onComplete: () => { skipBtn.style.display = 'none'; } });
+    }
+    gsap.set([beat1, beat2, beat3], { opacity: 0, display: 'none' });
+
+    if (reduced) {
+      gsap.set(soilMound, { y: 0, opacity: 1 });
+      gsap.set(seedAssembly, { y: 0, opacity: 1 });
+      gsap.set([hint, sig], { opacity: 1 });
+      startSeedLoops();
+      return;
+    }
+
+    const b4Tl = gsap.timeline();
+    b4Tl.fromTo(soilMound,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out' },
+      0
+    );
+    b4Tl.fromTo(seedAssembly,
+      { y: -30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.95, ease: 'back.out(2.2)', onComplete: startSeedLoops },
+      0.65
+    );
+    b4Tl.fromTo(hint,
+      { opacity: 0, y: 0 },
+      {
+        opacity: 1, duration: 1.0, ease: 'power2.out',
+        onComplete: () => {
+          gsap.to(hint, { y: -3, duration: 2.2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        }
+      },
+      '+=0.2'
+    );
+    b4Tl.fromTo(sig,
+      { opacity: 0 },
+      { opacity: 0.8, duration: 1.2, ease: 'power2.out' },
+      '-=0.4'
+    );
+  }
+
+  /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ SKIP INTRO AFFORDANCE ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+  function skipToBeat4() {
+    if (!inSequence) return;
+    if (introTl) introTl.kill();
+    startBeat4();
+  }
+  function onScreenPointerDown(e) {
+    if (!inSequence) return;
+    skipToBeat4();
+  }
+  skipBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    skipToBeat4();
+  });
+  window.addEventListener('pointerdown', onScreenPointerDown);
+
+  /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ SCENE 1 STAGED SEQUENCE (Total ~11s) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+  gsap.set([beat1, beat2, beat3], { opacity: 0 });
+  gsap.set([hint, sig], { opacity: 0 });
+  gsap.set([soilMound, seedAssembly], { opacity: 0, y: 0 });
+
+  try {
+  if (!reduced) {
+    introTl = gsap.timeline({ paused: true });
+    introTl.set({}, {}, '+=1.0'); // 1s calm start
+
+    // BEAT 1
+    introTl.set(beat1, { opacity: 1 });
+    introTl.fromTo(beat1Words,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.9, stagger: 0.18, ease: 'power3.out' }
+    );
+    introTl.set({}, {}, '+=1.6'); // Hold 1.6s
+
+    // BEAT 2
+    introTl.to(beat1, {
+      y: -24, opacity: 0, duration: 0.8, ease: 'power2.in',
+      onComplete: () => { beat1.style.display = 'none'; }
+    });
+    introTl.set(beat2, { opacity: 1 });
+    introTl.fromTo(beat2Words,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.9, stagger: 0.18, ease: 'power3.out' }
+    );
+    introTl.set({}, {}, '+=1.2'); // Hold 1.2s
+
+    // BEAT 3
+    introTl.to(beat2, {
+      y: -24, opacity: 0, duration: 0.8, ease: 'power2.in',
+      onComplete: () => { beat2.style.display = 'none'; }
+    });
+    introTl.set(beat3, { opacity: 1 });
+    introTl.fromTo(beat3Chars,
+      { y: 22, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.05, ease: 'power3.out' }
+    );
+    introTl.to(beat3, {
+      textShadow: '0 0 45px rgba(246, 185, 59, 0.95), 0 2px 32px rgba(255, 220, 190, 0.95)',
+      duration: 0.7, yoyo: true, repeat: 1, ease: 'sine.inOut'
+    }, '-=0.2');
+    introTl.set({}, {}, '+=2.0'); // Hold 2s
+
+    // BEAT 4
+    introTl.to(beat3, {
+      y: -24, opacity: 0, duration: 0.8, ease: 'power2.in',
+      onComplete: () => {
+        beat3.style.display = 'none';
+        startBeat4();
+      }
+    });
+  } else {
+    introTl = gsap.timeline({ paused: true });
+    introTl.set({}, {}, '+=1.0');
+    introTl.to(beat1, { opacity: 1, duration: 0.6 });
+    introTl.set({}, {}, '+=1.6');
+    introTl.to(beat1, { opacity: 0, duration: 0.6, onComplete: () => { beat1.style.display = 'none'; } });
+    introTl.to(beat2, { opacity: 1, duration: 0.6 });
+    introTl.set({}, {}, '+=1.2');
+    introTl.to(beat2, { opacity: 0, duration: 0.6, onComplete: () => { beat2.style.display = 'none'; } });
+    introTl.to(beat3, { opacity: 1, duration: 0.6 });
+    introTl.set({}, {}, '+=2.0');
+    introTl.to(beat3, {
+      opacity: 0, duration: 0.6,
+      onComplete: () => {
+        beat3.style.display = 'none';
+        startBeat4();
+      }
+    });
+  }
+  } catch (error) {
+    console.error('[Scene 1 setup failed]', error);
+  }
+
+  const playScene1AfterFonts = async () => {
+    try {
+      await Promise.race([document.fonts.ready, new Promise(resolve => setTimeout(resolve, 1500))]);
+    } catch (error) {
+      console.error('[Scene 1 fonts failed]', error);
+    }
+    if (introTl) introTl.play();
+  };
+  playScene1AfterFonts();
+
+  setTimeout(() => {
+    const visible = [beat1, beat2, beat3].some(el => Number(getComputedStyle(el).opacity) > 0.05);
+    if (!visible && introTl && document.querySelector('#scene-0.active')) {
+      gsap.set(beat1, { opacity: 1 });
+      gsap.set(beat1Words, { opacity: 1, y: 0 });
+      introTl.play();
+    }
+  }, 2500);
+
+  // Interactive touch-down / hover scaling on seed
+  hitbox.addEventListener('pointerdown', () => {
+    seedAssembly.style.transform = 'scale(1.06)';
+  });
+  const resetScale = () => { seedAssembly.style.transform = 'scale(1)'; };
+  hitbox.addEventListener('pointerup', resetScale);
+  hitbox.addEventListener('pointerleave', resetScale);
+  hitbox.addEventListener('pointercancel', resetScale);
+
+  /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ TAP INTERACTION (Sprout Emerges) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+  function onTap() {
+    if (tapped || inSequence) return;
+    tapped = true;
+    hitbox.style.pointerEvents = 'none';
+    if (navigator.vibrate) try { navigator.vibrate(15); } catch(e) {}
+    gsap.killTweensOf([seedWhole, seedHalo, seedPulseRing, hbGlow, hint]);
+
+    if (reduced) {
+      gsap.set([seedWhole, seedAssembly], { display: 'none' });
+      gsap.set(sproutStem, { strokeDashoffset: 170 });
+      gsap.set([cotL, cotR], { opacity: 1 });
+      gsap.to([hint, sig], { opacity: 0, duration: 0.3 });
+      setTimeout(() => goTo(1), 1500);
+      return;
+    }
+
+    const tl = seedGrowTl = gsap.timeline();
+
+    // Heartbeat swell on touch
+    tl.to(hbGlow, { opacity: 0.65, scale: 1.35, duration: 0.35, ease: 'power2.out', transformOrigin: 'center center' }, 0);
+    tl.to(hbGlow, { opacity: 0, scale: 1.7, duration: 0.9, ease: 'power2.in' }, 0.35);
+
+    // 1. Wobble
+    tl.to(seedWhole, { rotation: -18, duration: 0.09, ease: 'power2.out', transformOrigin: '0px 38px' }, 0)
+      .to(seedWhole, { rotation: 15, duration: 0.09, ease: 'power2.out' })
+      .to(seedWhole, { rotation: -10, duration: 0.07, ease: 'power2.out' })
+      .to(seedWhole, { rotation: -12, duration: 0.07, ease: 'power2.out' });
+
+    // 2. Shell splits & hides completely (no stray crack lines)
+    tl.to(seedL, {
+      rotation: -60, x: -30, y: 20, opacity: 0,
+      duration: 0.8, ease: 'power3.in', transformOrigin: '0px 38px'
+    }, '+=0.08')
+    .to(seedR, {
+      rotation: 55, x: 30, y: 20, opacity: 0,
+      duration: 0.8, ease: 'power3.in', transformOrigin: '0px 38px'
+    }, '<')
+    .set([seedWhole, seedAssembly], { display: 'none' }, '+=0.1');
+
+    // 3. Particles & petals burst
+    const angles = [-80,-55,-35,-15,8,25,48,72,95,-110,130,-140,160,-165,110,-90];
+    const dists  = [50,62,55,68,64,58,52,70,48,60,56,50,62,44,58,54];
+    particles.forEach((p, i) => {
+      const a = (angles[i] ?? i * 23) * Math.PI / 180;
+      const d = dists[i] ?? 55;
+      tl.to(p, { x: Math.cos(a)*d, y: Math.sin(a)*d, opacity: 0.8,
+                 duration: 0.22, ease: 'power3.out' }, '<0.02')
+        .to(p, { y: `+=${28 + Math.random() * 32}`, opacity: 0,
+                 duration: 0.65, ease: 'power2.in' }, '>-0.06');
+    });
+
+    const heroSvg = document.getElementById('hero-svg');
+    for (let i = 0; i < 7; i++) {
+      const petal = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+      petal.setAttribute('cx', '0'); petal.setAttribute('cy', '30');
+      petal.setAttribute('rx', String(3 + Math.random()*3.5));
+      petal.setAttribute('ry', String(2 + Math.random()*2));
+      petal.setAttribute('fill', i < 4 ? '#F2B8A2' : '#F6B93B');
+      petal.setAttribute('opacity', '0');
+      heroSvg.appendChild(petal);
+      const a2 = ((i * 50) - 145) * Math.PI / 180;
+      const d2 = 55 + Math.random() * 45;
+      tl.to(petal, { x: Math.cos(a2)*d2, y: Math.sin(a2)*d2 - 20,
+                     rotation: Math.random()*360, opacity: 0.45,
+                     duration: 0.35, ease: 'power3.out' }, '<0.03')
+        .to(petal, { y: `+=${35+Math.random()*30}`, opacity: 0,
+                     duration: 0.8, ease: 'power2.in' }, '>-0.1');
+    }
+
+    // 4. Stem draws to its original Scene 1 height.
+    tl.to(sproutStem, { strokeDashoffset: 170, duration: 1.2, ease: 'power3.out' }, '-=0.6');
+
+    // 5. Cotyledon leaves unfold
+    gsap.set(cotL, { scaleX: 0.1, scaleY: 0.3, rotation: 30, svgOrigin: '0 -90' });
+    gsap.set(cotR, { scaleX: 0.1, scaleY: 0.3, rotation: -30, svgOrigin: '0 -90' });
+    tl.to(cotL, {
+      opacity: 1, scaleX: 1, scaleY: 1, rotation: 0,
+      duration: 0.8, ease: 'elastic.out(1.1,0.6)',
+      svgOrigin: '0 -90'
+    }, '-=0.35')
+    .to(cotR, {
+      opacity: 1, scaleX: 1, scaleY: 1, rotation: 0,
+      duration: 0.8, ease: 'elastic.out(1.1,0.6)',
+      svgOrigin: '0 -90'
+    }, '<0.12');
+    tl.addLabel('cotyledonsOpen', '<0.8');
+
+    // 6. Hint and Signature fade out
+    tl.to([hint, sig], {
+      opacity: 0, y: -8, duration: 0.7, ease: 'power3.in', stagger: 0.08
+    }, '-=0.3');
+
+    // Rise automatically after the leaves finish unfolding.
+    tl.add(() => {
+      goTo(1);
+    }, 'cotyledonsOpen+=1.2');
+  }
+
+  hitbox.addEventListener('click', onTap);
+  hitbox.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onTap(); }
+  });
+
+  /* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ SCENE 2: INTERACTIVE PLANT SHAKE & SPECKLES ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */
+  function shakePlant() {
+    if (reduced) return;
+    gsap.timeline()
+      .to(sproutStem, { rotation: '+=3.5', duration: 0.08, yoyo: true, repeat: 3, ease: 'sine.inOut' });
+
+    // Golden specks drift down
+    const heroSvg = document.getElementById('hero-svg');
+    for (let i = 0; i < 5; i++) {
+      const speck = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      speck.setAttribute('cx', String(-20 + Math.random() * 40));
+      speck.setAttribute('cy', String(-90 + Math.random() * 50));
+      speck.setAttribute('r', String(1.5 + Math.random() * 1.5));
+      speck.setAttribute('fill', '#F6C26B');
+      speck.setAttribute('opacity', '0.8');
+      heroSvg.appendChild(speck);
+      gsap.to(speck, {
+        y: '+=55 + Math.random() * 35',
+        x: '+=' + ((Math.random() - 0.5) * 35),
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+        onComplete: () => speck.remove()
+      });
+    }
+  }
+  plantHitbox.addEventListener('click', (e) => {
+    if (current === 1) shakePlant();
+  });
+
+  /* ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â SCENE HOOKS ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â */
+
+  // Scene 0 Exit
+  window.sceneHooks[0] = {
+    exit(el, tl) {
+      tl.to(el, { opacity: 0, duration: 0.6, ease: 'power2.in' });
+    }
+  };
+
+  // Scene 1 Enter (Transition to Scene 2: Continuous Camera Pan + Stem 2.2x Growth)
+  let scene2Timeline = null;
+  function buildScene2Timeline(el) {
+    try {
+      scene2Timeline = gsap.timeline({ paused: true });
+      const tl = scene2Timeline;
+      const targetX = window.innerWidth <= 768 ? 0 : -window.innerWidth * 0.27;
+      const targetY = 0;
+      const targetPlantScale = window.innerWidth <= 768 ? 1.5 : Math.min(1.6, 0.045 * window.innerWidth + 0.85);
+
+      gsap.set([s2QuoteWords], { y: 14, opacity: 0 });
+      gsap.set(s2CounterBlock, { opacity: 0 });
+      gsap.set(monthUnitText, { y: 14, opacity: 0 });
+      gsap.set(s2PersonalLines, { yPercent: 100, opacity: 0 });
+      gsap.set(s2Closing, { opacity: 0, y: 8 });
+      gsap.set(s2PlantDate, { opacity: 0 });
+      gsap.set(dateConnectorPath, { strokeDashoffset: 60 });
+      gsap.set(s2ContinueBtn, { opacity: 0, y: 12 });
+      gsap.set(plantAssembly, { scale: 1, transformOrigin: '0px 60px' });
+      gsap.set(trueLeafL, { scaleX: 0.05, scaleY: 0.1, rotation: 35, opacity: 0, svgOrigin: '-4.6 -65' });
+      gsap.set(trueLeafR, { scaleX: 0.05, scaleY: 0.1, rotation: -35, opacity: 0, svgOrigin: '-4.3 -60' });
+
+      tl.to(worldLayer, { x: targetX, y: targetY, duration: 0.9, ease: 'power3.inOut' }, 0)
+        .to(plantAssembly, { scale: targetPlantScale, duration: 0.9, ease: 'power3.inOut', transformOrigin: '0px 60px' }, 0)
+        .to(sproutStem, { strokeDashoffset: 0, duration: 0.9, ease: 'power3.inOut' }, 0)
+        .to(cotTipGroup, { y: -162, duration: 0.9, ease: 'power3.inOut' }, 0)
+        .to(trueLeafL, { scaleX: 1, scaleY: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'power2.out', svgOrigin: '-4.6 -65' }, 0.65)
+        .to(trueLeafR, { scaleX: 1, scaleY: 1, rotation: 0, opacity: 1, duration: 0.5, ease: 'power2.out', svgOrigin: '-4.3 -60' }, 0.90)
+        .to(s2QuoteWords, { y: 0, opacity: 1, duration: 0.42, stagger: 0.1, ease: 'power3.out' }, 0)
+        .to(s2CounterBlock, { opacity: 1, duration: 0.16 }, 1.12)
+        .fromTo(monthStrip, { y: '0%' }, { y: '-50%', duration: 0.9, ease: 'power3.out' }, 1.28)
+        .to(monthUnitText, { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out' }, 2.18)
+        .to(s2PersonalLines, { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power4.out' }, 3.45)
+        .to(s2Closing, { opacity: 0.9, y: 0, duration: 0.4, ease: 'power2.out' }, 4.65)
+        .call(positionS2PlantDate, [], 5.55)
+        .to(s2PlantDate, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 5.65)
+        .to(dateConnectorPath, { strokeDashoffset: 0, duration: 0.6, ease: 'power2.out' }, 5.65)
+        .to(s2ContinueBtn, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 6.15)
+        .call(() => { window.setParticleTransition && window.setParticleTransition(false); });
+    } catch (error) {
+      console.error('[Scene 2 setup failed]', error);
+      scene2Timeline = null;
+    }
+  }
+  buildScene2Timeline(document.getElementById('scene-1'));
+
+  // Scene 3: layered memory reveals; the persistent plant group is only animated temporarily.
+  let scene3Index = 0;
+  let scene3Reveal = null;
+  let scene3Move = null;
+  let scene3IntroTimeline = null;
+  let scene3IntroTimer = null;
+  let scene3Moving = false;
+  let scene3PointerStart = null;
+  let scene3PointerConsumed = false;
+  let scene3PointerOnButton = false;
+  const scene3WarmClasses = ['s3-warm-1','s3-warm-2','s3-warm-3'];
+  let bloomTimeline = null;
+  let bloomReady = false;
+  let bloomValue = 0;
+  const bloomDriver = { p: 0 };
+  let bloomTween = null;
+  let bloomGlowTimeline = null;
+  let bloomSwayTween = null;
+  let bloomStageCallback = null;
+  const bloomOverlays = { cotyledons: [], trueLeaves: [] };
+  const bloomHalos = { cotyledons: null, trueLeaves: null };
+  const bloomBud = { root: null, growth: null, petalTips: null, sepals: null, core: null };
+  const bloomCreatedNodes = [];
+  const bloomSvgNS = 'http://www.w3.org/2000/svg';
+  const makeBloomSvg = (tag, attrs = {}) => {
+    const node = document.createElementNS(bloomSvgNS, tag);
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+    return node;
+  };
+  window.setBloom = p => {
+    if (!bloomReady || !bloomTimeline) return;
+    try {
+      const value = Number.isFinite(Number(p)) ? Math.max(0, Math.min(1, Number(p))) : 0;
+      bloomValue = value;
+      bloomDriver.p = value;
+      bloomTimeline.progress(value);
+      if (bloomStageCallback) bloomStageCallback(value);
+    } catch (error) {
+      console.error('[Scene 3 bloom control failed]', error);
+    }
+  };
+  function animateBloomTo(p, duration = 1.4) {
+    if (!bloomReady) return;
+    if (bloomTween) bloomTween.kill();
+    if (reduced) { window.setBloom(p); return; }
+    bloomDriver.p = bloomValue;
+    bloomTween = gsap.to(bloomDriver, {
+      p, duration, ease: 'power2.inOut',
+      onUpdate: () => window.setBloom(bloomDriver.p)
+    });
+  }
+  function stopBloomSway() {
+    if (bloomSwayTween) bloomSwayTween.kill();
+    bloomSwayTween = null;
+    if (bloomReady && bloomBud.growth) gsap.set(bloomBud.growth, { rotation: 0, svgOrigin: '0 0' });
+  }
+  function startBloomSway() {
+    if (!bloomReady || reduced || bloomSwayTween) return;
+    bloomSwayTween = gsap.to(bloomBud.growth, {
+      rotation: 1.5, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut', svgOrigin: '0 0'
+    });
+  }
+  function tuneBloomSway(amplitude) {
+    if (!bloomReady || reduced) return;
+    if (bloomSwayTween) bloomSwayTween.kill();
+    bloomSwayTween = gsap.to(bloomBud.growth, {
+      rotation: amplitude, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut', svgOrigin: '0 0'
+    });
+  }
+  function setBloomGlowCue(momentIndex) {
+    if (!bloomReady) return;
+    if (bloomGlowTimeline) bloomGlowTimeline.kill();
+    const allOverlays = [...bloomOverlays.cotyledons, ...bloomOverlays.trueLeaves];
+    const allHalos = [bloomHalos.cotyledons, bloomHalos.trueLeaves];
+    gsap.set(allOverlays, { opacity: 0 });
+    gsap.set(allHalos, { opacity: 0, scale: .8, transformOrigin: '50% 50%' });
+    const overlays = momentIndex === 0 ? bloomOverlays.cotyledons
+      : momentIndex === 1 ? bloomOverlays.trueLeaves
+      : momentIndex === 2 ? allOverlays : [];
+    const halos = momentIndex === 0 ? [bloomHalos.cotyledons]
+      : momentIndex === 1 ? [bloomHalos.trueLeaves]
+      : momentIndex === 2 ? allHalos : [];
+    if (!overlays.length) return;
+    if (reduced) {
+      gsap.set(overlays, { opacity: .3 });
+      gsap.set(halos, { opacity: .35, scale: 1.15, transformOrigin: '50% 50%' });
+      return;
+    }
+    bloomGlowTimeline = gsap.timeline();
+    bloomGlowTimeline.to(overlays, { opacity: .75, duration: .6, ease: 'power2.inOut' }, 0)
+      .to(overlays, { opacity: .3, duration: 1, ease: 'power2.inOut' }, .6)
+      .to(halos, { opacity: .8, duration: .6, ease: 'power2.inOut' }, 0)
+      .to(halos, { opacity: .35, duration: 1, ease: 'power2.inOut' }, .6)
+      .to(halos, { scale: 1.15, duration: 1.6, ease: 'power2.inOut', transformOrigin: '50% 50%' }, 0);
+  }
+  function resetScene3Bloom() {
+    if (!bloomReady) return;
+    if (bloomTween) bloomTween.kill();
+    bloomTween = null;
+    if (bloomGlowTimeline) bloomGlowTimeline.kill();
+    bloomGlowTimeline = null;
+    stopBloomSway();
+    window.setBloom(0);
+    gsap.set([...bloomOverlays.cotyledons, ...bloomOverlays.trueLeaves], { opacity: 0 });
+    gsap.set([bloomHalos.cotyledons, bloomHalos.trueLeaves], { opacity: 0, scale: .8, transformOrigin: '50% 50%' });
+  }
+  function setupScene3Bloom() {
+    let defs = null;
+    let glowGradient = null;
+    let glowFilter = null;
+    try {
+      if (!heroSvg || !sproutStem || !sproutGroup || !cotTipGroup || !trueLeafL || !trueLeafR || !cotL || !cotR) {
+        throw new Error('Required plant SVG groups are missing.');
+      }
+      const stemTip = sproutStem.getPointAtLength(sproutStem.getTotalLength());
+      console.log('stem tip:', stemTip.x, stemTip.y);
+      defs = heroSvg.querySelector('defs');
+      if (!defs) throw new Error('Plant SVG defs were not found.');
+      glowGradient = makeBloomSvg('radialGradient', { id: 's3-bloom-glow-gradient', cx: '50%', cy: '50%', r: '50%' });
+      [['0%','#F6B93B','.55'],['52%','#F6B93B','.22'],['100%','#F6B93B','0']].forEach(([offset,color,opacity]) => {
+        glowGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color, 'stop-opacity': opacity }));
+      });
+      glowFilter = makeBloomSvg('filter', { id: 's3-bloom-static-blur', x: '-40%', y: '-40%', width: '180%', height: '180%' });
+      glowFilter.appendChild(makeBloomSvg('feGaussianBlur', { stdDeviation: 5 }));
+      const sepalGradient = makeBloomSvg('linearGradient', { id: 's3-bud-sepal-gradient', x1: '0', y1: '1', x2: '0', y2: '0' });
+      [['0%','#4F7A3A'],['45%','#6A994E'],['100%','#4F7A3A']].forEach(([offset,color]) => {
+        sepalGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color }));
+      });
+      const coreGradient = makeBloomSvg('radialGradient', { id: 's3-bud-core-gradient', cx: '45%', cy: '30%', r: '75%' });
+      [['0%','#FFD86B'],['100%','#F6B93B']].forEach(([offset,color]) => {
+        coreGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color }));
+      });
+      const petalGradient = makeBloomSvg('linearGradient', { id: 's3-bud-petal-gradient', x1: '0', y1: '0', x2: '0', y2: '1' });
+      [['0%','#FFD86B'],['100%','#F6B93B']].forEach(([offset,color]) => {
+        petalGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color }));
+      });
+      const resources = [glowGradient, glowFilter, sepalGradient, coreGradient, petalGradient];
+
+      function addHalo(parent, id, cy, beforeNode) {
+        const group = makeBloomSvg('g', { id, opacity: '0', 'aria-hidden': 'true' });
+        group.appendChild(makeBloomSvg('circle', {
+          cx: 0, cy, r: 50, fill: 'url(#s3-bloom-glow-gradient)', filter: 'url(#s3-bloom-static-blur)'
+        }));
+        parent.insertBefore(group, beforeNode);
+        bloomCreatedNodes.push(group);
+        return group;
+      }
+      bloomHalos.cotyledons = addHalo(cotTipGroup, 's3-bloom-cotyledon-halo', -110, cotTipGroup.firstElementChild);
+      bloomHalos.trueLeaves = addHalo(sproutGroup, 's3-bloom-true-leaf-halo', -96, trueLeafL);
+
+      function addLeafOverlay(source, id) {
+        const leafShift = source.querySelector(':scope > .leaf-shift');
+        const basePath = leafShift && leafShift.querySelector(':scope > path');
+        if (!basePath) throw new Error(`Leaf path missing in ${source.id}.`);
+        const overlay = makeBloomSvg('g', { id, opacity: '0', 'aria-hidden': 'true' });
+        const copy = basePath.cloneNode(false);
+        copy.removeAttribute('id');
+        copy.removeAttribute('class');
+        copy.setAttribute('fill', '#FFE08A');
+        copy.setAttribute('stroke', 'none');
+        copy.removeAttribute('opacity');
+        overlay.appendChild(copy);
+        leafShift.appendChild(overlay);
+        bloomCreatedNodes.push(overlay);
+        return overlay;
+      }
+      bloomOverlays.cotyledons.push(addLeafOverlay(cotL, 's3-glow-cot-L'));
+      bloomOverlays.cotyledons.push(addLeafOverlay(cotR, 's3-glow-cot-R'));
+      bloomOverlays.trueLeaves.push(addLeafOverlay(trueLeafL, 's3-glow-true-L'));
+      bloomOverlays.trueLeaves.push(addLeafOverlay(trueLeafR, 's3-glow-true-R'));
+
+      const budRoot = makeBloomSvg('g', { id: 's3-sunflower-bud', transform: `translate(${stemTip.x} ${stemTip.y})`, 'aria-hidden': 'true' });
+      const budGrowth = makeBloomSvg('g', { id: 's3-sunflower-bud-growth' });
+      budGrowth.appendChild(makeBloomSvg('path', {
+        d: 'M0 11 C-2 8 2 4 0 0', fill: 'none', stroke: 'url(#stemGrad)', 'stroke-width': 7, 'stroke-linecap': 'round'
+      }));
+      const sepals = makeBloomSvg('g', { id: 's3-bud-sepals' });
+      const budSeps = 12;
+      for (let i = 0; i < budSeps; i++) {
+        const angle = (i - (budSeps - 1) / 2) * 5;
+        const sepal = makeBloomSvg('g', { transform: `rotate(${angle} 0 8)` });
+        sepal.appendChild(makeBloomSvg('path', {
+          d: 'M0 10 C-12 1 -10 -17 -1 -31 C7 -19 11 1 0 10 Z',
+          fill: 'url(#s3-bud-sepal-gradient)', stroke: '#4F7A3A', 'stroke-width': 1, 'stroke-linejoin': 'round'
+        }));
+        sepal.appendChild(makeBloomSvg('path', {
+          d: 'M0 7 C-2 0 -2 -11 0 -22', fill: 'none', stroke: '#A8D08D', 'stroke-width': .8,
+          'stroke-linecap': 'round', opacity: .5
+        }));
+        sepals.appendChild(sepal);
+      }
+      const petalTips = makeBloomSvg('g', { id: 's3-bud-petal-tips', opacity: '0' });
+      for (let i = 0; i < 8; i++) {
+        const tip = makeBloomSvg('g', { transform: `rotate(${i * 45} 0 -23)` });
+        tip.appendChild(makeBloomSvg('path', {
+          d: 'M0 -21 C-2 -23 -2 -25 0 -28 C2 -25 2 -23 0 -21 Z',
+          fill: 'url(#s3-bud-petal-gradient)', stroke: '#E5A91D', 'stroke-width': .5, 'stroke-linejoin': 'round'
+        }));
+        petalTips.appendChild(tip);
+      }
+      const core = makeBloomSvg('ellipse', {
+        id: 's3-bud-core', cx: 0, cy: -23, rx: 4.5, ry: 4.5, fill: 'url(#s3-bud-core-gradient)',
+        stroke: '#D99B17', 'stroke-width': .7
+      });
+      const sepalOpen = makeBloomSvg('g', { id: 's3-bud-opening' });
+      sepalOpen.appendChild(sepals);
+      sepalOpen.appendChild(petalTips);
+      sepalOpen.appendChild(core);
+      budGrowth.appendChild(sepalOpen);
+      budRoot.appendChild(budGrowth);
+      sproutGroup.appendChild(budRoot);
+      bloomCreatedNodes.push(budRoot);
+      bloomBud.root = budRoot;
+      bloomBud.growth = budGrowth;
+      bloomBud.petalTips = petalTips;
+      bloomBud.sepals = sepalOpen;
+      bloomBud.core = core;
+      resources.forEach(resource => { defs.appendChild(resource); bloomCreatedNodes.push(resource); });
+
+      bloomTimeline = gsap.timeline({ paused: true });
+      gsap.set(budGrowth, { opacity: 0, scale: 0, y: 10, rotation: 0, svgOrigin: '0 0' });
+      gsap.set(petalTips, { opacity: 0, scale: .7, transformOrigin: '50% 50%' });
+      gsap.set(core, { opacity: 0 });
+      gsap.set(sepalOpen, { scaleX: 1, scaleY: 1, transformOrigin: '50% 40%' });
+      bloomTimeline.to(budGrowth, { opacity: 1, scale: .55, y: 0, duration: .1, ease: 'power2.inOut', svgOrigin: '0 0' }, .15)
+        .to(core, { opacity: 1, duration: .1, ease: 'power2.inOut' }, .15)
+        .to(budGrowth, { scale: .8, duration: .1, ease: 'power2.inOut', svgOrigin: '0 0' }, .25)
+        .to(budGrowth, { scale: 1, duration: .1, ease: 'power2.inOut', svgOrigin: '0 0' }, .35)
+        .to(sepalOpen, { scaleX: 1.08, scaleY: .94, duration: .1, ease: 'power2.inOut', transformOrigin: '50% 40%' }, .35)
+        .to(petalTips, { opacity: 1, scale: 1, duration: .1, ease: 'power2.inOut', transformOrigin: '50% 50%' }, .35)
+        .to(budGrowth, { scale: 1, duration: .55, ease: 'none', svgOrigin: '0 0' }, .45);
+      bloomTimeline.progress(0);
+      bloomReady = true;
+      window.setBloom(0);
+    } catch (error) {
+      bloomReady = false;
+      if (bloomTimeline) bloomTimeline.kill();
+      bloomTimeline = null;
+      bloomCreatedNodes.forEach(node => { if (node.parentNode) node.parentNode.removeChild(node); });
+      console.error('[Scene 3 bloom setup failed]', error);
+    }
+  }
+  setupScene3Bloom();
+  let scene4PetalsReady = false;
+  let scene4PetalRings = { back: null, frontUpper: null, frontLower: null };
+  let scene4BudGlow = null;
+  let scene4FlowerCenter = null;
+  let scene4BloomHead = null;
+  let scene4SepalCup = null;
+  let scene4FrontPetals = [];
+  let scene4PetalSwayTween = null;
+  function setupScene4Petals() {
+    const created = [];
+    try {
+      if (!bloomReady || !bloomBud.growth) throw new Error('The Scene 3 bud is unavailable.');
+      const defs = heroSvg.querySelector('defs');
+      if (!defs) throw new Error('Plant SVG defs were not found.');
+      const petalGradient = makeBloomSvg('linearGradient', { id: 's4-petal-gradient', x1: '0', y1: '0', x2: '0', y2: '1' });
+      [['0%','#FFE27A'],['52%','#F6B93B'],['100%','#E39B1B']].forEach(([offset,color]) => petalGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color })));
+      const veinGradient = makeBloomSvg('linearGradient', { id: 's4-petal-vein', x1: '0', y1: '0', x2: '0', y2: '1' });
+      [['0%','#FFF0A0'],['100%','#FFF0A0']].forEach(([offset,color]) => veinGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color })));
+      const centerGradient = makeBloomSvg('radialGradient', { id: 's4-center-gradient', cx: '28%', cy: '24%', r: '78%' });
+      [['0%','#8A5A2B'],['54%','#5B3A1E'],['100%','#3A2412']].forEach(([offset,color]) => centerGradient.appendChild(makeBloomSvg('stop', { offset, 'stop-color': color })));
+      [petalGradient, veinGradient, centerGradient].forEach(node => { defs.appendChild(node); created.push(node); });
+
+      scene4BloomHead = makeBloomSvg('g', { id: 's4-bloom-head', 'aria-hidden': 'true' });
+      bloomBud.growth.appendChild(scene4BloomHead); created.push(scene4BloomHead);
+      scene4SepalCup = makeBloomSvg('g', { id: 's4-sepal-cup', opacity: '0', 'aria-hidden': 'true' });
+      scene4BloomHead.appendChild(scene4SepalCup); created.push(scene4SepalCup);
+      const sepalNeck = makeBloomSvg('path', {
+        id: 's4-sepal-neck', d: 'M-8 -8 C-6 -15 6 -15 8 -8 L5 4 C1 8 -1 8 -5 4 Z',
+        fill: 'url(#s3-bud-sepal-gradient)', stroke: '#4F7A3A', 'stroke-width': 1
+      });
+      scene4BloomHead.appendChild(sepalNeck); created.push(sepalNeck);
+      for (let i = 0; i < 12; i++) {
+        const angle = -128 + i * (256 / 11);
+        const sepal = makeBloomSvg('g', { transform: `translate(0 -27) rotate(${angle})` });
+        sepal.appendChild(makeBloomSvg('path', {
+          d: 'M0 0 C-7 7 -8 19 0 27 C8 19 7 7 0 0 Z',
+          fill: 'url(#s3-bud-sepal-gradient)', stroke: '#4F7A3A', 'stroke-width': .85, 'stroke-linejoin': 'round'
+        }));
+        sepal.appendChild(makeBloomSvg('path', { d: 'M0 2 C0 10 0 19 0 24', fill: 'none', stroke: '#A8D08D', 'stroke-width': .8, 'stroke-linecap': 'round', opacity: .55 }));
+        scene4SepalCup.appendChild(sepal);
+      }
+
+      function makePetalRing(id, layer, targetGroup) {
+        const ring = makeBloomSvg('g', { id, opacity: '0', 'aria-hidden': 'true' });
+        targetGroup.appendChild(ring); created.push(ring);
+        for (let i = 0; i < 14; i++) {
+          const angle = (360 / 14) * (i + layer * .5);
+          const radians = angle * Math.PI / 180;
+          const radius = layer === 0 ? 17 : 14;
+          const x = Math.sin(radians) * radius;
+          const y = -27 - Math.cos(radians) * radius;
+          const lengthJitter = Math.sin((i + 1) * 8.17 + layer * 2.4) * 4;
+          const rotationJitter = Math.sin((i + 1) * 3.71 + layer * 1.3) * 5;
+          const petal = makeBloomSvg('g', { transform: `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(angle + rotationJitter).toFixed(2)})` });
+          const sway = makeBloomSvg('g', { class: 's4-petal-sway' });
+          const shape = makeBloomSvg('g', { transform: `scale(1 ${(40 + lengthJitter) / 40})` });
+          shape.appendChild(makeBloomSvg('path', {
+            d: 'M0 0 C-6 -9 -7 -25 -1 -39 Q0 -42 1 -39 C7 -25 6 -9 0 0 Z',
+            fill: 'url(#s4-petal-gradient)', stroke: '#D98E12', 'stroke-width': .6, 'stroke-linejoin': 'round'
+          }));
+          shape.appendChild(makeBloomSvg('path', { d: 'M0 -3 C.4 -14 -.4 -28 0 -39', fill: 'none', stroke: '#FFF0A0', 'stroke-width': 1, 'stroke-linecap': 'round', opacity: .7 }));
+          shape.appendChild(makeBloomSvg('path', { d: 'M2 -5 C4 -15 3 -27 2 -35', fill: 'none', stroke: '#B87611', 'stroke-width': .65, 'stroke-linecap': 'round', opacity: .24 }));
+          sway.appendChild(shape); petal.appendChild(sway); ring.appendChild(petal);
+          if (layer === 1) scene4FrontPetals.push({ sway, x, y, delay: (i % 7) * .11, direction: i % 2 ? -1 : 1 });
+        }
+        return ring;
+      }
+      scene4PetalRings.back = makePetalRing('s4-petal-ring-back', 0, scene4BloomHead);
+      scene4PetalRings.frontUpper = makeBloomSvg('g', { id: 's4-petal-ring-front-upper', opacity: '0', 'aria-hidden': 'true' });
+      scene4PetalRings.frontLower = makeBloomSvg('g', { id: 's4-petal-ring-front-lower', opacity: '0', 'aria-hidden': 'true' });
+      scene4BloomHead.appendChild(scene4PetalRings.frontUpper); created.push(scene4PetalRings.frontUpper);
+      const centerGroup = makeBloomSvg('g', { id: 's4-flower-center-group', opacity: '0', 'aria-hidden': 'true' });
+      scene4BloomHead.appendChild(centerGroup); created.push(centerGroup);
+      scene4BloomHead.appendChild(scene4PetalRings.frontLower); created.push(scene4PetalRings.frontLower);
+      // Split the staggered front rosette so its upper petals sit behind the disc and its lower petals overlap it.
+      const frontNodes = makeBloomSvg('g', { id: 's4-front-petal-source', opacity: '0', 'aria-hidden': 'true' });
+      const builtFront = makePetalRing('s4-front-petal-build', 1, frontNodes);
+      Array.from(builtFront.children).forEach((petal, i) => {
+        const angle = (360 / 14) * (i + .5);
+        const upper = Math.cos(angle * Math.PI / 180) > 0;
+        (upper ? scene4PetalRings.frontUpper : scene4PetalRings.frontLower).appendChild(petal);
+      });
+      if (builtFront.parentNode) builtFront.parentNode.removeChild(builtFront);
+      const buildIndex = created.indexOf(builtFront);
+      if (buildIndex >= 0) created.splice(buildIndex, 1);
+
+      scene4BudGlow = makeBloomSvg('circle', { id: 's4-bud-glow', cx: 0, cy: -27, r: 66, fill: 'url(#s3-bloom-glow-gradient)', filter: 'url(#s3-bloom-static-blur)', opacity: '0', 'aria-hidden': 'true' });
+      scene4BloomHead.insertBefore(scene4BudGlow, scene4SepalCup.nextSibling); created.push(scene4BudGlow);
+      const center = makeBloomSvg('ellipse', { id: 's4-flower-center', cx: 0, cy: -27, rx: 13, ry: 13, fill: 'url(#s4-center-gradient)', stroke: '#2A1709', 'stroke-width': .9 });
+      centerGroup.appendChild(center); created.push(center); scene4FlowerCenter = centerGroup;
+      for (let n = 0; n < 30; n++) {
+        const angle = n * 137.5 * Math.PI / 180;
+        const radius = 1.6 * Math.sqrt(n);
+        centerGroup.appendChild(makeBloomSvg('circle', { cx: (Math.cos(angle) * radius).toFixed(2), cy: (-27 + Math.sin(angle) * radius).toFixed(2), r: (0.8 + (n % 3) * .2).toFixed(1), fill: '#2A1709', opacity: '.7' }));
+      }
+      for (let n = 0; n < 18; n++) {
+        const angle = n * 20 * Math.PI / 180;
+        centerGroup.appendChild(makeBloomSvg('circle', { cx: (Math.cos(angle) * 11.4).toFixed(2), cy: (-27 + Math.sin(angle) * 11.4).toFixed(2), r: '.55', fill: '#FFD86B', opacity: '.62' }));
+      }
+
+      gsap.set([scene4PetalRings.back, scene4PetalRings.frontUpper, scene4PetalRings.frontLower], { scale: 0, opacity: 0, svgOrigin: '0 -27' });
+      gsap.set(scene4SepalCup, { scale: .5, opacity: 0, svgOrigin: '0 -27' });
+      gsap.set(scene4BudGlow, { opacity: 0, scale: .78, svgOrigin: '0 -27' });
+      gsap.set(centerGroup, { opacity: 0, scale: .6, svgOrigin: '0 -27' });
+      gsap.set(scene4BloomHead, { rotation: 0, scaleY: 1, svgOrigin: '0 0' });
+      bloomTimeline
+        .to(bloomBud.sepals, { opacity: .35, duration: .05, ease: 'none' }, .50)
+        .to(scene4SepalCup, { opacity: .72, scale: .68, duration: .07, ease: 'power2.out', svgOrigin: '0 -27' }, .50)
+        .to([scene4PetalRings.back, scene4PetalRings.frontUpper, scene4PetalRings.frontLower], { opacity: 1, scaleY: .25, scaleX: .25, duration: .07, ease: 'power2.out', svgOrigin: '0 -27' }, .55)
+        .to(bloomBud.sepals, { opacity: 0, duration: .06, ease: 'power2.in' }, .55)
+        .to(bloomBud.petalTips, { opacity: 0, duration: .06, ease: 'power2.in' }, .55)
+        .to(scene4SepalCup, { opacity: 1, scale: .9, duration: .08, ease: 'power2.out', svgOrigin: '0 -27' }, .62)
+        .to(scene4PetalRings.back, { scale: .55, scaleY: .55, duration: .08, ease: 'power2.out', svgOrigin: '0 -27' }, .62)
+        .to(scene4PetalRings.frontUpper, { scale: .42, scaleY: .42, duration: .08, ease: 'power2.out', svgOrigin: '0 -27' }, .62)
+        .to(scene4PetalRings.frontLower, { scale: .42, scaleY: .42, duration: .08, ease: 'power2.out', svgOrigin: '0 -27' }, .62)
+        .to(scene4BloomHead, { scaleY: .8, duration: .08, ease: 'power2.inOut', svgOrigin: '0 0' }, .62)
+        .to(centerGroup, { opacity: 1, scale: 1, duration: .06, ease: 'power2.out', svgOrigin: '0 -27' }, .70)
+        .to([scene4PetalRings.back, scene4PetalRings.frontUpper, scene4PetalRings.frontLower], { scale: .85, scaleY: .85, duration: .09, ease: 'power2.out', svgOrigin: '0 -27' }, .76)
+        .to(scene4BloomHead, { rotation: -6, scaleY: .58, duration: .09, ease: 'power2.inOut', svgOrigin: '0 0' }, .76)
+        .to(scene4SepalCup, { scale: 1, duration: .09, ease: 'power2.out', svgOrigin: '0 -27' }, .76)
+        .to(cotL, { rotation: 0, y: 0, duration: .3, ease: 'power2.inOut', svgOrigin: '0 -90' }, .55)
+        .to(cotR, { rotation: 0, y: 0, duration: .3, ease: 'power2.inOut', svgOrigin: '0 -90' }, .55)
+        .to(cotL, { rotation: -80, y: 0, duration: .2, ease: 'power2.inOut', svgOrigin: '0 -90' }, .55)
+        .to(cotR, { rotation: 80, y: 0, duration: .2, ease: 'power2.inOut', svgOrigin: '0 -90' }, .55)
+        .to(scene4BloomHead, { scale: 1.5, duration: .09, ease: 'power2.out', svgOrigin: '0 0' }, .76)
+        .to(scene4BloomHead, { scale: 1.5, rotation: 0, scaleY: .86, duration: .15, ease: 'power2.inOut', svgOrigin: '0 0' }, .85)
+        .to(scene4SepalCup, { scaleX: 1.08, scaleY: 1.08, duration: .15, ease: 'power2.inOut', svgOrigin: '0 -27' }, .85)
+        .to(centerGroup, { scale: 1.08, duration: .15, ease: 'power2.out', svgOrigin: '0 -27' }, .85)
+        .to([scene4PetalRings.back, scene4PetalRings.frontUpper, scene4PetalRings.frontLower], {
+          scale: 1, scaleY: 1, duration: .15, ease: 'power2.inOut', svgOrigin: '0 -27'
+        }, .85);
+      bloomTimeline.progress(bloomValue);
+      scene4PetalsReady = true;
+      bloomStageCallback = value => {
+        if (!scene4PetalsReady || reduced) return;
+        if (value >= .7 && !scene4PetalSwayTween && scene4FrontPetals.length) {
+          scene4PetalSwayTween = gsap.timeline({ repeat: -1 });
+          scene4FrontPetals.forEach(({ sway, x, y, delay, direction }) => {
+            scene4PetalSwayTween.to(sway, { rotation: direction * 1.2, duration: 1.75, repeat: 1, yoyo: true, ease: 'sine.inOut', svgOrigin: `${x} ${y}` }, delay);
+          });
+        } else if (value < .7 && scene4PetalSwayTween) {
+          scene4PetalSwayTween.kill(); scene4PetalSwayTween = null;
+          scene4FrontPetals.forEach(({ sway }) => gsap.set(sway, { rotation: 0, svgOrigin: '0 0' }));
+        }
+      };
+    } catch (error) {
+      created.forEach(node => { if (node.parentNode) node.parentNode.removeChild(node); });
+      scene4PetalRings = { back: null, frontUpper: null, frontLower: null };
+      scene4BudGlow = null; scene4FlowerCenter = null; scene4BloomHead = null; scene4SepalCup = null;
+      scene4FrontPetals = []; scene4PetalsReady = false;
+      console.error('[PART 1 flower head setup failed]', error);
+    }
+  }
+  setupScene4Petals();
+  function pulseScene4Bud() {
+    if (!scene4PetalsReady || reduced) return;
+    gsap.killTweensOf(scene4BudGlow);
+    gsap.fromTo(scene4BudGlow, { opacity: 0, scale: .78, svgOrigin: '0 -27' }, {
+      opacity: .62, scale: 1.08, duration: .35, ease: 'power2.out',
+      onComplete() { gsap.to(scene4BudGlow, { opacity: 0, scale: .96, duration: .7, ease: 'power2.inOut', svgOrigin: '0 -27' }); }
+    });
+  }
+
+  const LETTER_HOLD_MS = 2000;
+  const letterSheet = document.getElementById('letter-sheet');
+  const letterParagraphs = Array.from(document.querySelectorAll('.letter-paragraph'));
+  const letterContinue = document.getElementById('letter-continue');
+  const letterActions = document.getElementById('letter-actions');
+  const letterOriginalCopy = letterParagraphs.map((paragraph, index) => index === 6 ? 'Always, Kathan' : paragraph.textContent);
+  let letterIndex = -1;
+  let letterRevealing = false;
+  let letterReveal = null;
+  let letterReadTimer = null;
+  let letterSafetyTimer = null;
+  let letterPointer = null;
+  let letterSetupReady = false;
+  function buildLetterLines() {
+    const measureCanvas = document.createElement('canvas');
+    const measure = measureCanvas.getContext('2d');
+    letterParagraphs.forEach((paragraph, index) => {
+      if (paragraph.dataset.prebuilt === 'true') return;
+      const original = paragraph.textContent;
+      paragraph.dataset.source = original;
+      paragraph.replaceChildren();
+      if (index === 6) {
+        const always = document.createElement('span');
+        always.className = 'letter-line-mask';
+        always.innerHTML = '<span class="letter-line">Always,</span>';
+        const name = document.createElement('span');
+        name.className = 'letter-signoff-name';
+        Array.from('Kathan').forEach(char => {
+          const span = document.createElement('span');
+          span.className = 'letter-name-char';
+          span.textContent = char;
+          name.appendChild(span);
+        });
+        paragraph.append(always, name);
+        paragraph.dataset.prebuilt = 'true';
+        return;
+      }
+      const style = getComputedStyle(paragraph);
+      const width = Math.max(150, paragraph.getBoundingClientRect().width || letterSheet.clientWidth - 56);
+      if (measure) measure.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const words = original.split(/\s+/);
+      const lines = [];
+      let line = '';
+      words.forEach(word => {
+        const candidate = line ? `${line} ${word}` : word;
+        if (line && measure && measure.measureText(candidate).width > width) {
+          lines.push(line);
+          line = word;
+        } else line = candidate;
+      });
+      if (line) lines.push(line);
+      lines.forEach(text => {
+        const mask = document.createElement('span');
+        mask.className = 'letter-line-mask';
+        const lineNode = document.createElement('span');
+        lineNode.className = 'letter-line';
+        lineNode.textContent = text;
+        mask.appendChild(lineNode);
+        paragraph.appendChild(mask);
+      });
+      paragraph.dataset.prebuilt = 'true';
+    });
+  }
+  function restoreLetterPlainText() {
+    letterParagraphs.forEach((paragraph, index) => {
+      paragraph.replaceChildren();
+      paragraph.dataset.source = letterOriginalCopy[index];
+      if (index === 6) {
+        paragraph.appendChild(document.createTextNode('Always,'));
+        const name = document.createElement('span');
+        name.className = 'letter-signoff-name';
+        name.textContent = 'Kathan';
+        paragraph.appendChild(name);
+      } else paragraph.textContent = letterOriginalCopy[index];
+      paragraph.style.display = 'none';
+    });
+  }
+  const letterSetupPromise = (async () => {
+    try {
+      if (document.fonts && document.fonts.ready) {
+        await Promise.race([document.fonts.ready, new Promise(resolve => setTimeout(resolve, 1500))]);
+      }
+      buildLetterLines();
+      letterParagraphs.forEach(paragraph => { paragraph.style.display = 'none'; });
+      letterSetupReady = true;
+    } catch (error) {
+      console.error('[Scene 4 letter setup failed]', error);
+      restoreLetterPlainText();
+      letterSetupReady = true;
+    }
+  })();
+
+  function letterScrollTo(paragraph) {
+    const sheetRect = letterSheet.getBoundingClientRect();
+    const paragraphRect = paragraph.getBoundingClientRect();
+    const top = letterSheet.scrollTop + paragraphRect.bottom - sheetRect.top - letterSheet.clientHeight + 28;
+    letterSheet.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+  }
+  function finishLetterReveal() {
+    if (!letterReveal || !letterRevealing) return;
+    letterReveal.progress(1);
+  }
+  function setLetterBloom(index, animate = true) {
+    const targets = [.45, .55, .62, .70, .76, .85, .85];
+    const target = targets[Math.max(0, Math.min(6, index))];
+    if (reduced && scene4PetalsReady) {
+      const stageRings = [scene4PetalRings.frontUpper, scene4PetalRings.frontLower, scene4PetalRings.back, scene4FlowerCenter].filter(Boolean);
+      gsap.to(stageRings, { opacity: 0, duration: .12, ease: 'none', onComplete: () => {
+        window.setBloom(target);
+        const visible = [];
+        if (target >= .55) visible.push(scene4PetalRings.frontUpper, scene4PetalRings.frontLower);
+        if (target >= .70) visible.push(scene4PetalRings.back);
+        if (target >= .76) visible.push(scene4FlowerCenter);
+        gsap.to(visible, { opacity: 1, duration: .15, ease: 'none' });
+      } });
+    } else if (animate) animateBloomTo(target, 1.0);
+    else window.setBloom(target);
+    const amplitude = 1.5 + Math.max(0, Math.min(1, (target - .45) / .4)) * .5;
+    tuneBloomSway(amplitude);
+    if (index > 0) {
+      if (reduced && scene4PetalsReady) {
+        gsap.set(scene4BudGlow, { opacity: .22 });
+        gsap.to(scene4BudGlow, { opacity: 0, duration: .25, ease: 'none' });
+      } else pulseScene4Bud();
+    } else if (scene4PetalsReady && reduced) gsap.to(scene4BudGlow, { opacity: 0, duration: .15, ease: 'none' });
+  }
+  function beginLetterParagraph(index, reveal = true) {
+    if (!letterSetupReady) {
+      letterSetupPromise.then(() => beginLetterParagraph(index, reveal));
+      return;
+    }
+    if (letterReadTimer) { clearTimeout(letterReadTimer); letterReadTimer = null; }
+    if (letterReveal) letterReveal.kill();
+    letterIndex = index;
+    letterRevealing = reveal;
+    gsap.set(letterActions, { visibility: 'hidden', opacity: 0, y: 8 });
+    letterContinue.style.display = 'none';
+    gsap.set(letterContinue, { opacity: 0, y: 12 });
+    const paragraph = letterParagraphs[index];
+    paragraph.style.display = 'block';
+    gsap.set(paragraph, { opacity: 1 });
+    if (index > 0) gsap.to(letterParagraphs[index - 1], { opacity: .65, duration: reduced ? .12 : .35, ease: 'power2.out' });
+    letterScrollTo(paragraph);
+    setLetterBloom(index, true);
+    if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+    if (!reveal || reduced) {
+      gsap.set(paragraph.querySelectorAll('.letter-line'), { opacity: 1, yPercent: 0, y: 0 });
+      gsap.set(paragraph.querySelectorAll('.letter-name-char'), { opacity: 1, y: 0 });
+      letterRevealing = false;
+      letterReveal = null;
+      if (reduced) gsap.fromTo(paragraph, { opacity: 0 }, { opacity: 1, duration: .15, ease: 'none' });
+      onLetterParagraphComplete();
+      return;
+    }
+    const lines = paragraph.querySelectorAll('.letter-line');
+    const chars = paragraph.querySelectorAll('.letter-name-char');
+    if (!lines.length) {
+      letterRevealing = false;
+      letterReveal = null;
+      onLetterParagraphComplete();
+      return;
+    }
+    gsap.set(lines, { opacity: 0, yPercent: 100, y: 0 });
+    gsap.set(chars, { opacity: 0, y: 10 });
+    letterReveal = gsap.timeline({ onComplete: () => {
+      letterRevealing = false;
+      letterReveal = null;
+      onLetterParagraphComplete();
+    } });
+    letterReveal.to(lines, { opacity: 1, yPercent: 0, duration: .5, stagger: .07, ease: 'power3.out' }, 0);
+    if (chars.length) letterReveal.to(chars, { opacity: 1, y: 0, duration: .22, stagger: .035, ease: 'power3.out' }, '>');
+  }
+  function onLetterParagraphComplete() {
+    if (letterIndex >= 6) {
+      letterContinue.style.display = 'inline-flex';
+      gsap.set(letterActions, { visibility: 'visible' });
+      if (reduced) gsap.set([letterActions, letterContinue], { opacity: 1, y: 0 });
+      else gsap.to([letterActions, letterContinue], { opacity: 1, y: 0, duration: .45, ease: 'power2.out' });
+      return;
+    }
+    const delay = LETTER_HOLD_MS;
+    letterReadTimer = setTimeout(() => beginLetterParagraph(letterIndex + 1), delay);
+  }
+  function skipLetterToEnd() {
+    if (!letterSetupReady) { letterSetupPromise.then(skipLetterToEnd); return; }
+    if (letterReadTimer) { clearTimeout(letterReadTimer); letterReadTimer = null; }
+    if (letterReveal) letterReveal.kill();
+    letterParagraphs.forEach((paragraph, index) => {
+      paragraph.style.display = 'block';
+      gsap.set(paragraph, { opacity: index < 6 ? .65 : 1 });
+      gsap.set(paragraph.querySelectorAll('.letter-line'), { opacity: 1, yPercent: 0, y: 0 });
+      gsap.set(paragraph.querySelectorAll('.letter-name-char'), { opacity: 1, y: 0 });
+    });
+    letterIndex = 6;
+    letterRevealing = false;
+    letterReveal = null;
+    letterContinue.style.display = 'inline-flex';
+    setLetterBloom(6, true);
+    letterScrollTo(letterParagraphs[6]);
+    gsap.set(letterActions, { visibility: 'visible' });
+    if (reduced) gsap.set([letterActions, letterContinue], { opacity: 1, y: 0 });
+    else gsap.to([letterActions, letterContinue], { opacity: 1, y: 0, duration: .45, ease: 'power2.out' });
+    if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+  }
+  function backLetter() {
+    if (letterIndex <= 0) { goTo(2); return; }
+    if (letterReadTimer) { clearTimeout(letterReadTimer); letterReadTimer = null; }
+    if (letterReveal) letterReveal.kill();
+    const previous = letterIndex - 1;
+    letterParagraphs.forEach((paragraph, index) => {
+      paragraph.style.display = index <= previous ? 'block' : 'none';
+      gsap.set(paragraph, { opacity: index < previous ? .65 : 1 });
+      gsap.set(paragraph.querySelectorAll('.letter-line'), { opacity: 1, yPercent: 0, y: 0 });
+      gsap.set(paragraph.querySelectorAll('.letter-name-char'), { opacity: 1, y: 0 });
+    });
+    letterIndex = previous;
+    letterRevealing = false;
+    letterReveal = null;
+    letterContinue.style.display = 'none';
+    gsap.set(letterActions, { visibility: 'hidden', opacity: 0, y: 8 });
+    gsap.set(letterContinue, { opacity: 0, y: 12 });
+    setLetterBloom(previous, true);
+    letterScrollTo(letterParagraphs[previous]);
+  }
+  function letterTap() {
+    if (letterRevealing) finishLetterReveal();
+    else if (letterIndex < 0) beginLetterParagraph(0);
+    else if (letterIndex < 6) beginLetterParagraph(letterIndex + 1);
+  }
+  function forceLetterGreeting() {
+    letterSetupPromise.then(() => {
+      const greeting = letterParagraphs[0];
+      const computed = getComputedStyle(greeting);
+      const greetingLine = greeting.querySelector('.letter-line');
+      const lineOpacity = greetingLine ? Number(getComputedStyle(greetingLine).opacity) : 1;
+      const visible = greeting.textContent.trim() && greeting.getClientRects().length > 0 && computed.display !== 'none' && Number(computed.opacity) > .05 && lineOpacity > .05;
+      if (visible) return;
+      if (letterIndex < 0) {
+        beginLetterParagraph(0, false);
+        return;
+      }
+      if (letterIndex === 0) {
+        greeting.style.display = 'block';
+        gsap.set(greeting, { opacity: 1 });
+        gsap.set(greeting.querySelectorAll('.letter-line'), { opacity: 1, yPercent: 0, y: 0 });
+        if (letterReveal) letterReveal.kill();
+        letterReveal = null;
+        letterRevealing = false;
+        onLetterParagraphComplete();
+      } else if (letterIndex > 0) {
+        greeting.style.display = 'block';
+        gsap.set(greeting, { opacity: .65 });
+        gsap.set(greeting.querySelectorAll('.letter-line'), { opacity: 1, yPercent: 0, y: 0 });
+      }
+    });
+  }
+  window.handleScene4Key = key => {
+    if (key === 'ArrowLeft' || key === 'ArrowUp') backLetter();
+    else if (key === 'ArrowRight' || key === 'ArrowDown') letterTap();
+    else return false;
+    return true;
+  };
+  const scene4 = document.getElementById('scene-3');
+  scene4.addEventListener('pointerdown', event => {
+    if (transitioning) return;
+    letterPointer = { x: event.clientX, y: event.clientY, interactive: !!event.target.closest('button') };
+  });
+  scene4.addEventListener('pointerup', event => {
+    if (transitioning || !letterPointer) return;
+    const dx = event.clientX - letterPointer.x;
+    const dy = event.clientY - letterPointer.y;
+    if (!letterPointer.interactive) {
+      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)) dx < 0 ? letterTap() : backLetter();
+      else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) letterTap();
+    }
+    letterPointer = null;
+  });
+  scene4.addEventListener('pointercancel', () => { letterPointer = null; });
+  letterContinue.addEventListener('click', event => { event.stopPropagation(); goTo(4); });
+  function resetLetterScene() {
+    if (letterReadTimer) clearTimeout(letterReadTimer);
+    if (letterSafetyTimer) clearTimeout(letterSafetyTimer);
+    if (letterReveal) letterReveal.kill();
+    letterReadTimer = null;
+    letterSafetyTimer = null;
+    letterReveal = null;
+    letterRevealing = false;
+    letterIndex = -1;
+    letterParagraphs.forEach(paragraph => { paragraph.style.display = 'none'; gsap.set(paragraph, { opacity: 1 }); });
+    letterSheet.scrollTop = 0;
+    letterContinue.style.display = 'none';
+    gsap.set(letterActions, { visibility: 'hidden', opacity: 0, y: 8 });
+    gsap.set(letterContinue, { opacity: 0, y: 12 });
+  }
+  const s3ExamText = document.querySelector('.s3-exam');
+  if (s3ExamText && !s3ExamText.querySelector('.s3-char')) {
+    const examCopy = s3ExamText.textContent;
+    s3ExamText.textContent = '';
+    Array.from(examCopy).forEach((char, index) => {
+      const span = document.createElement('span');
+      span.className = 's3-char';
+      span.textContent = char;
+      s3ExamText.appendChild(span);
+    });
+  }
+  gsap.set(scene3Moments, { visibility: 'hidden', opacity: 0 });
+  gsap.set(scene3Intro, { visibility: 'hidden', opacity: 0 });
+  gsap.set(scene3Content, { opacity: 0, y: 20 });
+  gsap.set(scene3Halo, { opacity: 0 });
+
+  function scene3HideIntroControls() {
+    gsap.set([scene3Controls, scene3Progress], { visibility: 'hidden', opacity: 0 });
+    scene3Controls.style.display = 'none';
+    scene3Controls.style.pointerEvents = 'none';
+  }
+
+  function scene3EnterIntro() {
+    scene3Index = -1;
+    scene3Moving = false;
+    if (scene3IntroTimer) clearTimeout(scene3IntroTimer);
+    if (scene3IntroTimeline) scene3IntroTimeline.kill();
+    if (scene3Reveal) scene3Reveal.kill();
+    scene3Reveal = null;
+    scene3WarmClasses.forEach(c => stage.classList.remove(c));
+    stage.classList.add('s3-warm-0');
+    resetScene3Bloom();
+    gsap.set(scene3Moments, { visibility: 'hidden', opacity: 0, y: 0 });
+    scene3Moments.forEach(moment => moment.setAttribute('aria-hidden', 'true'));
+    scene3Intro.setAttribute('aria-hidden', 'false');
+    gsap.set(scene3Intro, { visibility: 'visible', opacity: 1, y: 0 });
+    gsap.set(scene3IntroWords, { opacity: 0, y: 16 });
+    gsap.set(scene3IntroSupport, { opacity: 0 });
+    scene3HideIntroControls();
+    gsap.set(scene3Halo, { opacity: 0 });
+    if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+    if (reduced) {
+      gsap.set([scene3IntroWords, scene3IntroSupport], { opacity: 1, y: 0 });
+      scene3IntroTimer = setTimeout(scene3LeaveIntro, 2600);
+      return;
+    }
+    scene3IntroTimeline = gsap.timeline({ onComplete: () => {
+      if (scene3Index === -1 && !scene3Moving) scene3IntroTimer = setTimeout(scene3LeaveIntro, 2600);
+      if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+    } });
+    scene3IntroTimeline.to(scene3IntroWords, { opacity: 1, y: 0, duration: .42, stagger: .09, ease: 'power3.out' }, 0)
+      .to(scene3IntroSupport, { opacity: 1, duration: .5, ease: 'power2.out' }, 1.76);
+    gsap.to(plantAssembly, { scale: gsap.getProperty(plantAssembly, 'scale') * 1.015, duration: .7, repeat: 1, yoyo: true, ease: 'sine.inOut', transformOrigin: '0px 60px' });
+  }
+
+  function scene3LeaveIntro() {
+    if (scene3Index !== -1 || scene3Moving) return;
+    if (scene3IntroTimer) { clearTimeout(scene3IntroTimer); scene3IntroTimer = null; }
+    scene3Moving = true;
+    if (scene3IntroTimeline && scene3IntroTimeline.isActive()) scene3IntroTimeline.progress(1);
+    if (scene3IntroTimer) { clearTimeout(scene3IntroTimer); scene3IntroTimer = null; }
+    if (reduced) {
+      gsap.to(scene3Intro, { opacity: 0, duration: .15, ease: 'none', onComplete: () => {
+        scene3Intro.setAttribute('aria-hidden', 'true');
+        gsap.set(scene3Intro, { visibility: 'hidden' });
+        scene3EnterMoment(0);
+        gsap.set(scene3Moments[0], { opacity: 0 });
+        gsap.to(scene3Moments[0], { opacity: 1, duration: .15, ease: 'none' });
+        gsap.set([scene3Controls, scene3Progress], { opacity: 0 });
+        gsap.to([scene3Controls, scene3Progress], { opacity: 1, duration: .15, ease: 'none' });
+      } });
+      return;
+    }
+    if (scene3Move) scene3Move.kill();
+    scene3Move = gsap.timeline({ onComplete: () => {
+      scene3Intro.setAttribute('aria-hidden', 'true');
+      gsap.set(scene3Intro, { visibility: 'hidden' });
+      scene3EnterMoment(0);
+    } });
+    scene3Move.to(scene3Intro, { y: -16, opacity: 0, duration: .5, ease: 'power2.in' });
+  }
+
+  function setScene3Progress(index) {
+    scene3Dots.forEach((dot, dotIndex) => {
+      dot.classList.toggle('is-active', dotIndex === index);
+      dot.classList.toggle('is-complete', dotIndex < index);
+    });
+    const progress = document.getElementById('scene3-progress');
+    if (progress) progress.setAttribute('aria-label', `Moment ${index + 1} of 3`);
+    const label = index === 2 ? 'continue' : 'next';
+    scene3Next.querySelector('span').textContent = label;
+    scene3Next.setAttribute('aria-label', index === 2 ? 'Continue to Scene 4' : 'Next moment');
+  }
+
+  function scene3FinishReveal() {
+    if (scene3Reveal && scene3Reveal.isActive()) scene3Reveal.progress(1);
+  }
+
+  function scene3EnterMoment(index) {
+    const fromIntro = scene3Index === -1;
+    scene3Index = index;
+    scene3Moving = false;
+    scene3WarmClasses.forEach(c => stage.classList.remove(c));
+    stage.classList.add(scene3WarmClasses[index]);
+    animateBloomTo([.2, .3, .45][index]);
+    setBloomGlowCue(index);
+    startBloomSway();
+    gsap.set(scene3Halo, { opacity: 0 });
+    if (fromIntro) {
+      scene3Controls.style.display = 'flex';
+      gsap.set([scene3Controls, scene3Progress], { visibility: 'visible', opacity: 0 });
+      scene3Controls.style.pointerEvents = 'none';
+    }
+    setScene3Progress(index);
+    scene3Moments.forEach((moment, i) => {
+      moment.setAttribute('aria-hidden', String(i !== index));
+      gsap.set(moment, { visibility: i === index ? 'visible' : 'hidden', opacity: i === index ? 1 : 0, y: 0 });
+    });
+    if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+    const moment = scene3Moments[index];
+    const title = moment.querySelector('.s3-title');
+    const support = moment.querySelector('.s3-support');
+    const statement = moment.querySelector('.s3-statement');
+    gsap.set([title, support], { opacity: 0, y: 10 });
+    if (reduced) {
+      gsap.set([title, support, statement], { opacity: 1, y: 0, yPercent: 0 });
+      gsap.set(moment.querySelectorAll('.s3-word,.s3-line,.s3-char'), { opacity: 1, y: 0, yPercent: 0 });
+      if (fromIntro) {
+        gsap.set([scene3Controls, scene3Progress], { opacity: 1, visibility: 'visible' });
+        scene3Controls.style.pointerEvents = 'auto';
+      }
+      if (index === 2) gsap.set(scene3Halo, { opacity: 1 });
+      scene3Reveal = null;
+      return;
+    }
+    scene3Reveal = gsap.timeline();
+    const s3 = scene3Reveal;
+    if (fromIntro) s3.to([scene3Controls, scene3Progress], { opacity: 1, duration: .4, ease: 'power2.out', onComplete: () => { scene3Controls.style.pointerEvents = 'auto'; } }, 0);
+    s3.to(title, { opacity: 1, y: 0, duration: .38, ease: 'power2.out' }, .25)
+      .to(support, { opacity: 1, y: 0, duration: .45, ease: 'power2.out' }, .5);
+    if (index === 0) {
+      const words = moment.querySelectorAll('.s3-word');
+      gsap.set(words, { opacity: 0, y: 16 });
+      s3.to(words, { opacity: 1, y: 0, duration: .42, stagger: .1, ease: 'power3.out' }, 0);
+    } else if (index === 1) {
+      const lines = moment.querySelectorAll('.s3-line');
+      gsap.set(lines, { opacity: 0, yPercent: 100, y: 0 });
+      s3.to(lines, { opacity: 1, yPercent: 0, duration: .8, stagger: .12, ease: 'power4.out' }, 0)
+        .to(sproutGroup, { rotation: 2, duration: .42, ease: 'sine.inOut', transformOrigin: '0px 44px' }, .25)
+        .to(sproutGroup, { rotation: 0, duration: .42, ease: 'sine.inOut', transformOrigin: '0px 44px' }, .67);
+    } else {
+      const chars = statement.querySelectorAll('.s3-char');
+      gsap.set(chars, { opacity: 0, y: 10 });
+      s3.to(chars, { opacity: 1, y: 0, duration: .36, stagger: .025, ease: 'power2.out' }, 0)
+        .to(scene3Halo, { opacity: 1, duration: .65, ease: 'power2.out' }, .9);
+    }
+    s3.eventCallback('onComplete', () => {
+      if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+    });
+  }
+
+  function scene3ChangeMoment(nextIndex) {
+    if (scene3Moving) return;
+    if (nextIndex > 2) { goTo(3); return; }
+    if (nextIndex < 0) {
+      if (scene3Index === 0) {
+        if (scene3Reveal && scene3Reveal.isActive()) scene3FinishReveal();
+        if (reduced) {
+          scene3Moving = true;
+          const proposal = scene3Moments[0];
+          gsap.to(proposal, { opacity: 0, duration: .15, ease: 'none', onComplete: () => {
+            proposal.setAttribute('aria-hidden', 'true');
+            gsap.set(proposal, { visibility: 'hidden' });
+            scene3EnterIntro();
+            gsap.set(scene3Intro, { opacity: 0 });
+            gsap.to(scene3Intro, { opacity: 1, duration: .15, ease: 'none' });
+          } });
+        } else {
+          scene3Moving = true;
+          if (scene3Move) scene3Move.kill();
+          scene3Move = gsap.timeline({ onComplete: () => {
+            scene3Moments[0].setAttribute('aria-hidden', 'true');
+            gsap.set(scene3Moments[0], { visibility: 'hidden' });
+            scene3EnterIntro();
+          } });
+          scene3Move.to(scene3Moments[0], { y: -16, opacity: 0, duration: .5, ease: 'power2.in' });
+        }
+      } else if (scene3Index === -1) goTo(1);
+      return;
+    }
+    if (scene3Reveal && scene3Reveal.isActive()) scene3FinishReveal();
+    if (reduced) {
+      scene3Moving = true;
+      const oldMoment = scene3Moments[scene3Index];
+      gsap.to(oldMoment, { opacity: 0, duration: .15, ease: 'none', onComplete: () => {
+        oldMoment.setAttribute('aria-hidden', 'true');
+        gsap.set(oldMoment, { visibility: 'hidden' });
+        scene3EnterMoment(nextIndex);
+        scene3Moving = true;
+        const nextMoment = scene3Moments[nextIndex];
+        gsap.set(nextMoment, { opacity: 0 });
+        gsap.to(nextMoment, { opacity: 1, duration: .15, ease: 'none', onComplete: () => { scene3Moving = false; } });
+      } });
+      return;
+    }
+    scene3Moving = true;
+    const currentMoment = scene3Moments[scene3Index];
+    if (scene3Move) scene3Move.kill();
+    scene3Move = gsap.timeline({ onComplete: () => {
+      currentMoment.setAttribute('aria-hidden', 'true');
+      gsap.set(currentMoment, { visibility: 'hidden' });
+      scene3EnterMoment(nextIndex);
+    } });
+    scene3Move.to(currentMoment, { y: -16, opacity: 0, duration: .5, ease: 'power2.in' });
+  }
+
+  function scene3Advance() { scene3ChangeMoment(scene3Index + 1); }
+  function scene3Back() { scene3ChangeMoment(scene3Index - 1); }
+  window.handleScene3Key = key => {
+    if (!['ArrowRight','ArrowLeft','ArrowDown','ArrowUp'].includes(key)) return false;
+    if (scene3Index === -1) {
+      if (key === 'ArrowLeft' || key === 'ArrowUp') goTo(1);
+      else scene3LeaveIntro();
+    }
+    else if (scene3Reveal && scene3Reveal.isActive()) scene3FinishReveal();
+    else if (key === 'ArrowLeft' || key === 'ArrowUp') scene3Back();
+    else scene3Advance();
+    return true;
+  };
+  scene3.addEventListener('pointerdown', event => {
+    scene3PointerStart = { x: event.clientX, y: event.clientY };
+    scene3PointerOnButton = !!event.target.closest('#scene3-next');
+    scene3PointerConsumed = false;
+    if (scene3PointerOnButton) return;
+    if (scene3Index === -1) {
+      scene3LeaveIntro();
+      scene3PointerConsumed = true;
+      return;
+    }
+    if (scene3.setPointerCapture && event.pointerId !== undefined) {
+      try { scene3.setPointerCapture(event.pointerId); } catch (_) {}
+    }
+    if (scene3Reveal && scene3Reveal.isActive()) {
+      scene3FinishReveal();
+      scene3PointerConsumed = true;
+    }
+  });
+  scene3.addEventListener('pointerup', event => {
+    if (!scene3PointerStart || scene3PointerOnButton) { scene3PointerStart = null; return; }
+    const dx = event.clientX - scene3PointerStart.x;
+    const dy = event.clientY - scene3PointerStart.y;
+    if (!scene3PointerConsumed) {
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? scene3Advance : scene3Back)();
+      else if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && event.clientX > window.innerWidth / 2) scene3Advance();
+    }
+    scene3PointerStart = null;
+    scene3PointerOnButton = false;
+    scene3PointerConsumed = false;
+  });
+  scene3.addEventListener('pointercancel', () => {
+    scene3PointerStart = null;
+    scene3PointerOnButton = false;
+    scene3PointerConsumed = false;
+  });
+  scene3Next.addEventListener('click', event => {
+    event.stopPropagation();
+    if (scene3Reveal && scene3Reveal.isActive()) scene3FinishReveal();
+    scene3Advance();
+  });
+
+  window.sceneHooks[2] = {
+    enter(el, tl, fromIndex) {
+      scene3Index = -1;
+      scene3Moving = true;
+      stage.classList.add('golden-hour');
+      scene3WarmClasses.forEach(c => stage.classList.remove(c));
+      stage.classList.add('s3-warm-0');
+      gsap.set(el, { opacity: 0 });
+      gsap.set(scene3Content, { opacity: 0, y: 20 });
+      if (reduced) {
+        gsap.set(scene3Content, { opacity: 1, y: 0 });
+        gsap.set(sproutGroup, { rotation: 0, transformOrigin: '0px 44px' });
+        if (fromIndex === 3) {
+          scene3Index = 1;
+          scene3EnterMoment(2);
+        } else {
+          scene3HideIntroControls();
+          scene3EnterIntro();
+        }
+        tl.to(el, { opacity: 1, duration: .2, ease: 'none' }, 0);
+        return;
+      }
+      if (fromIndex === 3) {
+        scene3Index = 1;
+        tl.to(el, { opacity: 1, duration: .35, ease: 'power2.out' }, 0)
+          .to(scene3Content, { opacity: 1, y: 0, duration: .45, ease: 'power2.out' }, .05)
+          .call(() => scene3EnterMoment(2), [], .25);
+        return;
+      }
+      scene3HideIntroControls();
+      tl.to(el, { opacity: 1, duration: .6, ease: 'power2.out' }, 0)
+        .to(scene3Content, { opacity: 1, y: 0, duration: .5, ease: 'power2.out' }, .15)
+        .to(sproutGroup, { rotation: 0, duration: .4, ease: 'sine.inOut', transformOrigin: '0px 44px' }, 0)
+        .call(scene3EnterIntro, [], .8);
+    },
+    exit(el, tl, nextIndex) {
+      scene3WarmClasses.forEach(c => stage.classList.remove(c));
+      if (reduced) {
+        if (nextIndex !== 3) resetScene3Bloom();
+        else gsap.set(scene3Halo, { opacity: 1 });
+        tl.to(el, { opacity: 0, duration: .2, ease: 'power1.out' });
+        return;
+      }
+      tl.to(scene3Content, { opacity: 0, y: -16, duration: .45, ease: 'power2.in' }, 0)
+        .to(scene3Halo, { opacity: nextIndex === 3 ? 1 : 0, duration: .35, ease: 'power2.out' }, 0)
+        .to(el, { opacity: 0, duration: .45, ease: 'power2.in' }, 0)
+        .call(() => { if (nextIndex !== 3) resetScene3Bloom(); }, [], .45);
+    }
+  };
+
+  let scene4PlantScale = null;
+  window.sceneHooks[3] = {
+    enter(el, tl) {
+      document.body.classList.add('letter-mode');
+      scene4PlantScale = gsap.getProperty(plantAssembly, 'scale') || 1;
+      gsap.set(plantAssembly, { scale: window.innerWidth <= 768 ? 1.2 : 1.5, transformOrigin: '0px 60px' });
+      if (window.setLetterParticleDensity) window.setLetterParticleDensity(true);
+      gsap.set(el, { opacity: 0 });
+      gsap.set(letterSheet, { opacity: 0, y: 16, visibility: 'visible' });
+      resetLetterScene();
+      letterSafetyTimer = setTimeout(forceLetterGreeting, 2000);
+      if (scene4PetalsReady && reduced) {
+        gsap.set([scene4PetalRings.back, scene4PetalRings.frontUpper, scene4PetalRings.frontLower, scene4BudGlow], { opacity: 0 });
+      }
+      if (bloomTween) bloomTween.kill();
+      bloomTween = null;
+      window.setBloom(.45);
+      tuneBloomSway(1.5);
+      if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+      if (reduced) {
+        gsap.set([el, letterSheet], { opacity: 0, y: 0 });
+        tl.to(el, { opacity: 1, duration: .15, ease: 'none' }, 0)
+          .to(letterSheet, { opacity: 1, duration: .15, ease: 'none' }, .05)
+          .call(() => { if (letterIndex < 0) beginLetterParagraph(0, false); }, [], .2);
+        return;
+      }
+      tl.to(el, { opacity: 1, duration: .45, ease: 'power2.out' }, 0)
+        .to(letterSheet, { opacity: 1, y: 0, duration: .65, ease: 'power3.out' }, .15)
+        .call(() => { if (letterIndex < 0) beginLetterParagraph(0); }, [], .72);
+    },
+    exit(el, tl, nextIndex) {
+      if (reduced) {
+        resetLetterScene();
+        document.body.classList.remove('letter-mode');
+        if (window.setLetterParticleDensity) window.setLetterParticleDensity(false);
+        gsap.killTweensOf(plantAssembly);
+        if (scene4PlantScale !== null) gsap.set(plantAssembly, { scale: scene4PlantScale, transformOrigin: '0px 60px' });
+        if (nextIndex === 2) tuneBloomSway(1.5);
+        tl.to(el, { opacity: 0, duration: .15, ease: 'none' });
+        return;
+      }
+      if (letterReadTimer) { clearTimeout(letterReadTimer); letterReadTimer = null; }
+      if (letterReveal) letterReveal.kill();
+      tl.to(letterSheet, { opacity: 0, y: -12, duration: .4, ease: 'power2.in' }, 0)
+        .to(el, { opacity: 0, duration: .4, ease: 'power2.in' }, 0)
+        .call(() => {
+          resetLetterScene();
+          document.body.classList.remove('letter-mode');
+          if (window.setLetterParticleDensity) window.setLetterParticleDensity(false);
+          gsap.killTweensOf(plantAssembly);
+          if (scene4PlantScale !== null) gsap.set(plantAssembly, { scale: scene4PlantScale, transformOrigin: '0px 60px' });
+          if (nextIndex === 2) {
+            if (bloomTween) bloomTween.kill();
+            bloomTween = null;
+            window.setBloom(.45);
+            tuneBloomSway(1.5);
+          }
+          if (window.refreshParticleCalmRects) window.refreshParticleCalmRects();
+        }, [], .4);
+    }
+  };
+
+  let scene5PointerHandler = null;
+  window.sceneHooks[4] = {
+    enter(el, tl) {
+      stage.classList.add('scene5-active');
+      document.body.classList.add('scene5-active');
+      const finalText = document.getElementById('scene5-final-text');
+      const main = document.getElementById('scene5-main');
+      const sub = document.getElementById('scene5-sub');
+      const titleWords = ['one', 'for', 'every', 'reason', 'I\'m', 'glad', 'it\'s', 'you.'];
+      main.innerHTML = titleWords.map((word, index) => `${index === 4 ? '<br>' : ''}<span class="scene5-word">${word}</span>`).join(' ');
+      const words = main.querySelectorAll('.scene5-word');
+      gsap.set(finalText, { opacity: 0 });
+      gsap.set(words, { opacity: 0, y: 16 });
+      gsap.set(sub, { opacity: 0, y: 10 });
+
+      gsap.set(el, { opacity: 0 });
+      if (reduced) {
+        gsap.set([finalText, words, sub], { opacity: 1, y: 0 });
+        tl.to(el, { opacity: 1, duration: .15, ease: 'none' });
+      } else {
+        tl.to(el, { opacity: 1, duration: .5, ease: 'power2.out' }, 0)
+          .to(finalText, { opacity: 1, duration: .5 }, 3.2)
+          .fromTo(words, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .55, stagger: .1, ease: 'power3.out' }, 3.2)
+          .to(sub, { opacity: 1, y: 0, duration: .55, ease: 'power3.out' }, 4.4);
+      }
+
+      scene5PointerHandler = event => {
+        if (tl.progress() < 1) tl.progress(1);
+      };
+      el.addEventListener('pointerdown', scene5PointerHandler);
+    },
+    exit(el, tl) {
+      if (scene5PointerHandler) el.removeEventListener('pointerdown', scene5PointerHandler);
+      scene5PointerHandler = null;
+      stage.classList.remove('scene5-active');
+      document.body.classList.remove('scene5-active');
+      tl.to(el, { opacity: 0, duration: reduced ? .15 : .45, ease: 'power2.in' });
+    }
+  };
+
+  window.sceneHooks[1] = {
+    enter(el, tl) {
+      gsap.set(el, { clearProps: 'opacity' });
+      gsap.set(document.getElementById('s2-content'), { clearProps: 'transform,opacity' });
+      stage.classList.add('golden-hour');
+      stage.classList.add('hero-garden');
+      heroSvg.setAttribute('viewBox', '-210 -520 420 600');
+      heroSvg.setAttribute('preserveAspectRatio', 'xMidYMax meet');
+      tl.call(() => {
+        try {
+          window.setParticleTransition && window.setParticleTransition(true);
+          if (scene2Timeline) scene2Timeline.restart();
+          setTimeout(() => window.setParticleTransition && window.setParticleTransition(false), 1000);
+        } catch (error) {
+          console.error('[Scene 2 playback failed]', error);
+        }
+      });
+    },
+    exit(el, tl) {
+      if (reduced) {
+        tl.to(el, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+        return;
+      }
+      tl.to(document.getElementById('s2-content'), { opacity: 0, y: -20, duration: .6, ease: 'power2.in' }, 0)
+        .to(el, { opacity: 0, duration: .6, ease: 'power2.in' }, 0);
+      gsap.to(plantAssembly, { scale: gsap.getProperty(plantAssembly, 'scale') * 1.015, duration: .7, repeat: 1, yoyo: true, ease: 'sine.inOut', transformOrigin: '0px 60px' });
+    }
+  };
+
+  // Scene 2 continue button wires to goTo(2)
+  s2ContinueBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    goTo(2);
+  });
+
+  // Window resize updater for worldLayer coordinates in Scene 2
+  window.addEventListener('resize', () => {
+    if (current === 1) {
+      const isMobile = window.innerWidth <= 768;
+      const targetX = isMobile ? 0 : -window.innerWidth * 0.27;
+      const targetY = 0;
+      gsap.to(worldLayer, { x: targetX, y: targetY, duration: 0.5, ease: 'power2.out' });
+      const targetPlantScale = isMobile ? 1.5 : Math.min(1.6, 0.045 * window.innerWidth + 0.85);
+      gsap.to(plantAssembly, { scale: targetPlantScale, duration: 0.5, ease: 'power2.out', transformOrigin: '0px 60px' });
+      heroSvg.setAttribute('viewBox', '-210 -520 420 600');
+    }
+  });
+
+})();
+
+</script>
+<script>
+const MEMORY_PHOTOS = [
+  'photos/IMG_20261018_184504_0784.jpg',
+  'photos/IMG_20261021_231943_0181.jpg',
+  'photos/IMG_20261025_162555.jpg',
+  'photos/IMG_20261101_101024_0538.jpg',
+  'photos/IMG_20261110_231043_621.jpg',
+  'photos/IMG_20261110_231342.jpg',
+  'photos/Locket_1792825211642_54.jpg',
+  'photos/Locket_1792974553927_70.jpg',
+  'photos/Locket_1793195337544_56.jpg'
+];
+
+const scene5Music = (() => {
+  try {
+    const audio = document.getElementById('bgm');
+    const button = document.getElementById('music-control');
+    const label = document.getElementById('music-label');
+    const onMark = button.querySelector('.music-on-mark');
+    const offMark = button.querySelector('.music-off-mark');
+    let available = true;
+    let active = false;
+    let muted = false;
+    let started = false;
+    let needsTap = false;
+    let playBlocked = false;
+    const safely = callback => (...args) => {
+      try { return callback(...args); }
+      catch (error) { console.error('[Scene 5 music failed]', error); }
+    };
+
+    const updateButton = () => {
+      button.classList.toggle('music-available', active && available);
+      button.classList.toggle('needs-tap', needsTap);
+      button.setAttribute('aria-pressed', String(started && !muted));
+      button.setAttribute('aria-label', muted ? 'Turn music on' : 'Turn music off');
+      label.textContent = needsTap ? 'tap for music' : '';
+      const soundOff = muted || !started;
+      onMark.style.display = soundOff ? 'none' : '';
+      offMark.style.display = soundOff ? '' : 'none';
+    };
+    const hideForLoadFailure = () => {
+      if (audio.error && audio.error.code === 1) {
+        needsTap = true;
+        updateButton();
+        return;
+      }
+      available = false;
+      needsTap = false;
+      button.classList.remove('music-available', 'needs-tap');
+      gsap.killTweensOf(audio);
+      audio.pause();
+    };
+    const rejectedPlay = error => {
+      if (error && error.name === 'NotAllowedError') {
+        playBlocked = true;
+        started = false;
+        needsTap = true;
+        updateButton();
+        return;
+      }
+      if (audio.error) {
+        hideForLoadFailure();
+        return;
+      }
+      started = false;
+      needsTap = true;
+      updateButton();
+    };
+    const fadeIn = duration => {
+      gsap.killTweensOf(audio);
+      audio.volume = 0;
+      playBlocked = false;
+      const result = audio.play();
+      Promise.resolve(result).then(() => {
+        playBlocked = false;
+        started = true;
+        needsTap = false;
+        updateButton();
+        if (active && !muted && !document.hidden) {
+          gsap.to(audio, { volume: .55, duration, ease: 'power1.inOut' });
+        }
+      }).catch(rejectedPlay);
+    };
+    const onContinue = () => {
+      if (!available) return;
+      audio.volume = 0;
+      playBlocked = false;
+      const result = audio.play();
+      Promise.resolve(result).then(() => {
+        playBlocked = false;
+        started = true;
+        needsTap = false;
+        updateButton();
+      }).catch(rejectedPlay);
+    };
+    const enter = () => {
+      active = true;
+      updateButton();
+      if (!available || muted) return;
+      if (audio.paused) fadeIn(3);
+      else {
+        gsap.killTweensOf(audio);
+        gsap.to(audio, { volume: .55, duration: 3, ease: 'power1.inOut' });
+      }
+    };
+    const leave = () => {
+      active = false;
+      updateButton();
+      if (!available || audio.paused) return;
+      gsap.killTweensOf(audio);
+      gsap.to(audio, { volume: 0, duration: 1.2, ease: 'power1.inOut', onComplete: () => audio.pause() });
+    };
+    const toggle = () => {
+      if (!available) return;
+      if (!started || needsTap) {
+        muted = false;
+        updateButton();
+        if (active) fadeIn(.6);
+        return;
+      }
+      muted = !muted;
+      updateButton();
+      if (muted) {
+        gsap.killTweensOf(audio);
+        gsap.to(audio, { volume: 0, duration: .6, ease: 'power1.inOut', onComplete: () => audio.pause() });
+      } else if (active) fadeIn(.6);
+    };
+
+    audio.addEventListener('error', safely(() => {
+      if (audio.error && audio.error.code === 1) {
+        needsTap = true;
+        updateButton();
+        return;
+      }
+      setTimeout(() => {
+        if (playBlocked) {
+          needsTap = true;
+          updateButton();
+        } else hideForLoadFailure();
+      }, 0);
+    }));
+    document.getElementById('letter-continue').addEventListener('click', safely(onContinue));
+    button.addEventListener('pointerdown', safely(event => event.stopPropagation()));
+    button.addEventListener('click', safely(event => { event.stopPropagation(); toggle(); }));
+    document.addEventListener('visibilitychange', safely(() => {
+      if (document.hidden) {
+        if (active && !audio.paused) {
+          gsap.killTweensOf(audio);
+          audio.pause();
+          audio.volume = 0;
+        }
+      } else if (active && !muted && available) fadeIn(1.2);
+    }));
+
+    return { enter, leave, stopEvent: event => event.stopPropagation() };
+  } catch (error) {
+    console.error('[Scene 5 music failed]', error);
+    return null;
+  }
+})();
+
+const scene5Flower = (() => {
+  try {
+    const scene = document.getElementById('scene-4');
+    const flower = document.getElementById('memory-window');
+    const sepals = document.getElementById('memory-sepals');
+    const petalsBack = document.getElementById('memory-petals-back');
+    const petalsFront = document.getElementById('memory-petals-front');
+    const images = Array.from(flower.querySelectorAll('.memory-photo-stack img'));
+    const seedDots = flower.querySelector('.memory-seed-dots');
+    const svgNS = 'http://www.w3.org/2000/svg';
+    let loadedPhotos = [];
+    let active = false;
+    let expanded = false;
+    let entranceRequested = false;
+    let flowerShown = false;
+    let entranceCall = null;
+    let slideTimer = null;
+    let enlargedTimer = null;
+    let visiblePhoto = 0;
+    let sceneSkipHandler = null;
+    const safely = callback => (...args) => {
+      try { return callback(...args); }
+      catch (error) { console.error('[Scene 5 sunflower failed]', error); }
+    };
+
+    for (let index = 0; index < 18; index++) {
+      const rotation = index * 20;
+      const sepal = document.createElementNS(svgNS, 'path');
+      sepal.setAttribute('d', 'M250 126 C234 148 228 181 250 218 C272 181 266 148 250 126Z');
+      sepal.setAttribute('fill', 'url(#memorySepalGrad)');
+      sepal.setAttribute('transform', `rotate(${rotation} 250 250)`);
+      sepals.appendChild(sepal);
+    }
+
+    const petalPath = 'M250 52 C239 72 234 112 239 174 Q250 184 261 174 C266 112 261 72 250 52Z';
+    for (let index = 0; index < 18; index++) {
+      [[petalsBack, index * 20], [petalsFront, index * 20 + 10]].forEach(([ring, rotation], ringIndex) => {
+        const variation = ((index * 7 + ringIndex * 3) % 9) - 4;
+        const petal = document.createElementNS(svgNS, 'g');
+        petal.classList.add('memory-petal');
+        petal.setAttribute('transform', `rotate(${rotation + variation * .35} 250 250) translate(0 ${variation})`);
+        const path = document.createElementNS(svgNS, 'path');
+        path.setAttribute('d', petalPath);
+        path.setAttribute('transform', `translate(250 250) scale(1 ${1 + variation * .006}) translate(-250 -250)`);
+        path.setAttribute('fill', 'url(#memoryPetalGrad)');
+        path.setAttribute('stroke', '#D98E12');
+        path.setAttribute('stroke-width', '.6');
+        petal.appendChild(path);
+        ring.appendChild(petal);
+      });
+    }
+
+    for (let index = 0; index < 24; index++) {
+      const angle = index * 137.5 * Math.PI / 180;
+      const radius = 47 + (index % 3) * .75;
+      const dot = document.createElement('span');
+      dot.className = 'memory-seed-dot';
+      dot.style.left = `${50 + Math.cos(angle) * radius}%`;
+      dot.style.top = `${50 + Math.sin(angle) * radius}%`;
+      seedDots.appendChild(dot);
+    }
+
+    const preparePhotos = async () => {
+      const results = await Promise.all(MEMORY_PHOTOS.map(async src => {
+        const image = new Image();
+        try {
+          const loaded = new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = reject;
+          });
+          image.src = src;
+          await loaded;
+          if (image.decode) {
+            let timeout;
+            const decoded = await Promise.race([
+              image.decode().then(() => true),
+              new Promise(resolve => { timeout = setTimeout(() => resolve(false), 1500); })
+            ]);
+            clearTimeout(timeout);
+            if (!decoded && !image.complete) return null;
+          }
+          if (!image.naturalWidth) return null;
+          return src;
+        } catch {
+          return null;
+        }
+      }));
+      loadedPhotos = results.filter(Boolean);
+      if (!loadedPhotos.length) return;
+      images[0].src = loadedPhotos[0];
+      images[0].classList.add('is-visible');
+      flower.classList.add('loaded');
+      if (entranceRequested && active) showFlower();
+    };
+
+    const restartKenBurns = (image, index) => {
+      if (reduced) return;
+      image.classList.toggle('origin-alt', index % 2 === 1);
+      image.classList.remove('ken-burn');
+      image.style.animation = 'none';
+      void image.offsetWidth;
+      image.style.animation = '';
+      image.classList.add('ken-burn');
+    };
+
+    const startSlideshow = () => {
+      clearInterval(slideTimer);
+      slideTimer = null;
+      if (loadedPhotos.length < 2 || document.hidden || !active || !flowerShown) return;
+      slideTimer = setInterval(safely(() => {
+        const nextPhoto = (visiblePhoto + 1) % loadedPhotos.length;
+        const nextImage = images[1 - (visiblePhoto % 2)];
+        const currentImage = images[visiblePhoto % 2];
+        nextImage.classList.remove('is-visible', 'ken-burn', 'origin-alt');
+        nextImage.src = loadedPhotos[nextPhoto];
+        if (nextPhoto % 2) nextImage.classList.add('origin-alt');
+        if (!reduced) {
+          nextImage.style.animation = 'none';
+          void nextImage.offsetWidth;
+          nextImage.style.animation = '';
+          nextImage.classList.add('ken-burn');
+        }
+        requestAnimationFrame(() => nextImage.classList.add('is-visible'));
+        currentImage.classList.remove('is-visible');
+        visiblePhoto = nextPhoto;
+      }), 3800);
+    };
+
+    const showFlower = () => {
+      entranceRequested = true;
+      if (!loadedPhotos.length) return;
+      if (flowerShown) return;
+      flowerShown = true;
+      if (entranceCall) {
+        entranceCall.kill();
+        entranceCall = null;
+      }
+      flower.classList.add('loaded');
+      flower.style.pointerEvents = active ? 'auto' : 'none';
+      restartKenBurns(images[visiblePhoto % 2], visiblePhoto);
+      if (reduced) {
+        gsap.set(flower, { opacity: 1, scale: 1 });
+        gsap.set(flower.querySelectorAll('.memory-petal'), { opacity: 1, scale: 1, transformOrigin: '250px 250px' });
+        startSlideshow();
+        return;
+      }
+      gsap.killTweensOf(flower);
+      gsap.fromTo(flower, { opacity: 0, scale: .6 }, {
+        opacity: 1, scale: 1, duration: .9, ease: 'back.out(1.3)'
+      });
+      const petals = flower.querySelectorAll('.memory-petal');
+      gsap.set(petals, { scale: 0, opacity: 0, transformOrigin: '250px 250px' });
+      gsap.to(petals, {
+        scale: 1, opacity: 1, duration: .5, stagger: .03, ease: 'back.out(1.3)',
+        onComplete() { flower.classList.add('motion-ready'); }
+      });
+      startSlideshow();
+    };
+
+    const closeFlower = () => {
+      if (!expanded) return;
+      expanded = false;
+      clearTimeout(enlargedTimer);
+      flower.classList.remove('is-enlarged');
+      gsap.to(flower, {
+        left: '50vw',
+        top: '50vh',
+        xPercent: -50,
+        yPercent: -50,
+        scale: 1,
+        duration: .7,
+        ease: 'power3.inOut'
+      });
+    };
+    const openFlower = () => {
+      if (expanded) {
+        closeFlower();
+        return;
+      }
+      expanded = true;
+      flower.classList.add('is-enlarged');
+      const mobile = window.innerWidth <= 768;
+      gsap.to(flower, {
+        left: mobile ? '50vw' : '34vw',
+        top: '50vh',
+        xPercent: -50,
+        yPercent: -50,
+        scale: mobile ? 2 : 2.2,
+        duration: .7,
+        ease: 'power3.inOut'
+      });
+      clearTimeout(enlargedTimer);
+      enlargedTimer = setTimeout(safely(closeFlower), 8000);
+    };
+
+    flower.addEventListener('pointerdown', safely(event => event.stopPropagation()));
+    flower.addEventListener('click', safely(event => { event.stopPropagation(); if (active) openFlower(); }));
+    document.getElementById('music-control').addEventListener('pointerdown', safely(() => {
+      if (expanded) closeFlower();
+    }));
+    flower.addEventListener('keydown', safely(event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openFlower();
+      }
+    }));
+    document.addEventListener('visibilitychange', safely(() => {
+      if (document.hidden) {
+        clearInterval(slideTimer);
+        slideTimer = null;
+      } else if (active) startSlideshow();
+    }));
+    preparePhotos().catch(error => console.error('[Scene 5 sunflower photos failed]', error));
+
+    return {
+      enter() {
+        active = true;
+        expanded = false;
+        entranceRequested = false;
+        flowerShown = false;
+        flower.classList.remove('motion-ready', 'is-enlarged');
+        flower.style.pointerEvents = 'none';
+        gsap.set(flower, { opacity: 0, scale: .6, xPercent: -50, yPercent: -50, clearProps: 'left,top' });
+        clearTimeout(enlargedTimer);
+        clearInterval(slideTimer);
+        if (sceneSkipHandler) scene.removeEventListener('pointerdown', sceneSkipHandler);
+        sceneSkipHandler = safely(event => {
+          if (event.target.closest('#memory-window, #music-control')) return;
+          if (expanded) {
+            closeFlower();
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return;
+          }
+          if (window.sceneHooks[4] && flower.isConnected) showFlower();
+        });
+        scene.addEventListener('pointerdown', sceneSkipHandler);
+        if (reduced) showFlower();
+        else entranceCall = gsap.delayedCall(5.55, safely(showFlower));
+      },
+      leave() {
+        active = false;
+        if (entranceCall) {
+          entranceCall.kill();
+          entranceCall = null;
+        }
+        clearInterval(slideTimer);
+        clearTimeout(enlargedTimer);
+        if (sceneSkipHandler) scene.removeEventListener('pointerdown', sceneSkipHandler);
+        sceneSkipHandler = null;
+        expanded = false;
+        flower.classList.remove('motion-ready', 'is-enlarged');
+        flower.style.pointerEvents = 'none';
+        gsap.killTweensOf(flower);
+        gsap.to(flower, { opacity: 0, scale: .6, duration: reduced ? .15 : .45, ease: 'power2.in' });
+      }
+    };
+  } catch (error) {
+    console.error('[Scene 5 sunflower failed]', error);
+    return null;
+  }
+})();
+
+try {
+  const scene5Hook = window.sceneHooks[4];
+  if (scene5Hook) {
+    const originalEnter = scene5Hook.enter;
+    const originalExit = scene5Hook.exit;
+    scene5Hook.enter = function(el, tl, fromIndex) {
+      originalEnter.call(this, el, tl, fromIndex);
+      try { if (scene5Music) scene5Music.enter(); }
+      catch (error) { console.error('[Scene 5 music failed]', error); }
+      try { if (scene5Flower) scene5Flower.enter(); }
+      catch (error) { console.error('[Scene 5 sunflower failed]', error); }
+    };
+    scene5Hook.exit = function(el, tl, nextIndex) {
+      try { if (scene5Music) scene5Music.leave(); }
+      catch (error) { console.error('[Scene 5 music failed]', error); }
+      try { if (scene5Flower) scene5Flower.leave(); }
+      catch (error) { console.error('[Scene 5 sunflower failed]', error); }
+      originalExit.call(this, el, tl, nextIndex);
+    };
+  }
+} catch (error) {
+  console.error('[Scene 5 feature wiring failed]', error);
+}
+</script>
+</body>
+</html>
